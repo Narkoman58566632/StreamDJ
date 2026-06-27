@@ -258,6 +258,80 @@ input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer;}
       <button class="settings-reset" onclick="resetColors()">↺ Скинути</button>
     </div>
   </div>
+
+  <div class="section">
+    <div class="section-title">🎬 вигляд віджету в obs</div>
+    <div class="theme-presets">
+      <div class="preset-btn" id="wp-red"    style="background:linear-gradient(135deg,#140000,#c0392b)" title="Червона" onclick="applyWidgetPreset('red')"></div>
+      <div class="preset-btn" id="wp-dark"   style="background:linear-gradient(135deg,#0a0a0a,#2a2a2a)" title="Темна" onclick="applyWidgetPreset('dark')"></div>
+      <div class="preset-btn" id="wp-blue"   style="background:linear-gradient(135deg,#000a1a,#1a3a6b)" title="Синя" onclick="applyWidgetPreset('blue')"></div>
+      <div class="preset-btn" id="wp-purple" style="background:linear-gradient(135deg,#0d001a,#4a1a7a)" title="Фіолетова" onclick="applyWidgetPreset('purple')"></div>
+      <div class="preset-btn" id="wp-green"  style="background:linear-gradient(135deg,#001a0a,#1a5a2a)" title="Зелена" onclick="applyWidgetPreset('green')"></div>
+      <div class="preset-btn" id="wp-orange" style="background:linear-gradient(135deg,#1a0800,#8b3a00)" title="Помаранчева" onclick="applyWidgetPreset('orange')"></div>
+      <div class="preset-btn" id="wp-cyber"  style="background:linear-gradient(135deg,#000d1a,#00c8ff)" title="Кібер" onclick="applyWidgetPreset('cyber')"></div>
+      <div class="preset-btn" id="wp-gold"   style="background:linear-gradient(135deg,#1a1400,#c8a000)" title="Золота" onclick="applyWidgetPreset('gold')"></div>
+    </div>
+    <div class="settings-grid">
+      <div class="setting-row">
+        <div class="setting-label">Фон віджету</div>
+        <div class="color-pick">
+          <input type="color" id="w-bg" value="#140000" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-bg" value="#140000" oninput="hexInputW('w-bg',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Колір рамки</div>
+        <div class="color-pick">
+          <input type="color" id="w-border" value="#c0392b" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-border" value="#c0392b" oninput="hexInputW('w-border',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Колір назви треку</div>
+        <div class="color-pick">
+          <input type="color" id="w-title" value="#ffffff" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-title" value="#ffffff" oninput="hexInputW('w-title',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Колір "від ..."</div>
+        <div class="color-pick">
+          <input type="color" id="w-from" value="#7a3535" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-from" value="#7a3535" oninput="hexInputW('w-from',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Колір "grає"</div>
+        <div class="color-pick">
+          <input type="color" id="w-label" value="#ff6060" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-label" value="#ff6060" oninput="hexInputW('w-label',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Колір черги (пілюлі)</div>
+        <div class="color-pick">
+          <input type="color" id="w-pill" value="#c08080" oninput="syncHexW(this)">
+          <input class="color-hex" type="text" id="wh-pill" value="#c08080" oninput="hexInputW('w-pill',this)">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Розмір тексту (px)</div>
+        <div class="color-pick">
+          <input type="number" id="w-fontsize" value="13" min="8" max="32" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text3);font-size:13px;width:80px;outline:none;">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Швидкість прокрутки (сек)</div>
+        <div class="color-pick">
+          <input type="number" id="w-scroll" value="12" min="4" max="60" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text3);font-size:13px;width:80px;outline:none;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <button class="settings-save" onclick="saveWidgetTheme()">🎬 Застосувати до OBS</button>
+      <button class="settings-reset" onclick="resetWidgetTheme()">↺ Скинути</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -610,6 +684,93 @@ window.resetColors = function() {
   localStorage.removeItem('dj_colors');
   applyPreset('red');
 };
+
+// ── WIDGET THEME (Firebase) ───────────────────────────────────────
+const WIDGET_FIELDS = ['w-bg','w-border','w-title','w-from','w-label','w-pill','w-fontsize','w-scroll'];
+
+const DEFAULT_WIDGET = {
+  bg:'#140000', border:'#c0392b', title:'#ffffff',
+  from:'#7a3535', label:'#ff6060', pill:'#c08080',
+  fontsize:13, scroll:12
+};
+
+const WIDGET_PRESETS = {
+  red:    {bg:'#140000',border:'#c0392b',title:'#ffffff',from:'#7a3535',label:'#ff6060',pill:'#c08080',fontsize:13,scroll:12},
+  dark:   {bg:'#0a0a0a',border:'#444444',title:'#ffffff',from:'#888888',label:'#cccccc',pill:'#aaaaaa',fontsize:13,scroll:12},
+  blue:   {bg:'#000a1a',border:'#2a6bbf',title:'#c0deff',from:'#3a6090',label:'#4da6ff',pill:'#6090c0',fontsize:13,scroll:12},
+  purple: {bg:'#0d001a',border:'#7b2fbe',title:'#e8c8ff',from:'#6a3590',label:'#bf7fff',pill:'#9060c0',fontsize:13,scroll:12},
+  green:  {bg:'#001a0a',border:'#27ae60',title:'#c0f0d0',from:'#357a50',label:'#44ff88',pill:'#60c080',fontsize:13,scroll:12},
+  orange: {bg:'#1a0800',border:'#c05a20',title:'#ffe0c0',from:'#8a5a35',label:'#ff8c44',pill:'#c08060',fontsize:13,scroll:12},
+  cyber:  {bg:'#000d1a',border:'#00c8ff',title:'#00ffee',from:'#007a99',label:'#00c8ff',pill:'#0090b0',fontsize:13,scroll:10},
+  gold:   {bg:'#1a1400',border:'#c8a000',title:'#fff0a0',from:'#8a7a35',label:'#ffd700',pill:'#c0a040',fontsize:13,scroll:12},
+};
+
+function applyWidgetPickersFromPreset(t) {
+  Object.entries(t).forEach(([k,v])=>{
+    const el = document.getElementById('w-'+k);
+    const hel = document.getElementById('wh-'+k);
+    if(el) el.value = v;
+    if(hel) hel.value = v;
+  });
+}
+
+window.applyWidgetPreset = function(name) {
+  document.querySelectorAll('[id^="wp-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('wp-'+name)?.classList.add('active');
+  applyWidgetPickersFromPreset(WIDGET_PRESETS[name]);
+};
+
+window.syncHexW = function(colorInput) {
+  const hexId = 'wh-' + colorInput.id.slice(2);
+  const hexEl = document.getElementById(hexId);
+  if (hexEl) hexEl.value = colorInput.value;
+};
+
+window.hexInputW = function(colorId, hexInput) {
+  const val = hexInput.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+    document.getElementById(colorId).value = val;
+  }
+};
+
+window.saveWidgetTheme = async function() {
+  const theme = {
+    bg:       document.getElementById('w-bg').value,
+    border:   document.getElementById('w-border').value,
+    title:    document.getElementById('w-title').value,
+    from:     document.getElementById('w-from').value,
+    label:    document.getElementById('w-label').value,
+    pill:     document.getElementById('w-pill').value,
+    fontsize: parseInt(document.getElementById('w-fontsize').value)||13,
+    scroll:   parseInt(document.getElementById('w-scroll').value)||12,
+  };
+  await set(ref(db, 'widget_theme'), theme);
+  const btn = document.querySelector('.section:last-child .settings-save');
+  btn.textContent = '✓ Застосовано!';
+  setTimeout(()=>btn.textContent='🎬 Застосувати до OBS', 1500);
+};
+
+window.resetWidgetTheme = async function() {
+  await set(ref(db, 'widget_theme'), DEFAULT_WIDGET);
+  Object.entries(DEFAULT_WIDGET).forEach(([k,v])=>{
+    const el = document.getElementById('w-'+k);
+    const hel = document.getElementById('wh-'+k);
+    if(el) el.value = v;
+    if(hel) hel.value = v;
+  });
+};
+
+// Load widget theme from Firebase into pickers
+onValue(ref(db,'widget_theme'), (snap)=>{
+  const t = snap.val();
+  if (!t) return;
+  Object.entries(t).forEach(([k,v])=>{
+    const el = document.getElementById('w-'+k);
+    const hel = document.getElementById('wh-'+k);
+    if(el) el.value = v;
+    if(hel) hel.value = v;
+  });
+});
 
 // Load saved colors on start
 (function loadColors() {
