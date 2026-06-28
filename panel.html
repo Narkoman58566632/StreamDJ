@@ -55,6 +55,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 .btn-reject{background:var(--red-btn);color:var(--red-btn-text);border:1px solid var(--border2);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;transition:background 0.2s;}
 .btn-reject:hover{background:#501515;}
 
+/* ПОКРАЩЕНІ СТИЛІ ДЛЯ АКТИВНОЇ ПІСНІ */
 .queue-item{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #2d0a0a;border-radius:8px;transition: background 0.2s;}
 .queue-item.playing-now {background: #3d0a0a; border: 1px solid var(--accent2); margin-bottom: 4px;}
 .queue-item:last-child{border-bottom:none;}
@@ -111,6 +112,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 .loading-screen .logo span{color:#6441a5;}
 .loading-screen p{font-size:12px;color:#555;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
 .lang-select-panel {background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px;border-radius:8px;font-size:11px;outline:none;cursor:pointer;}
 </style>
 </head>
@@ -247,19 +249,28 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 </div>
 
 <script type="module">
-// Использование локального хранилища вместо Firebase
-const STORAGE_KEYS = {
-  QUEUE: 'streamdj_local_queue',
-  CONTROL: 'streamdj_local_control',
-  PANEL_THEME: 'streamdj_local_panel_theme',
-  WIDGET_THEME: 'streamdj_local_widget_theme',
-  REWARD_NAME: 'streamdj_local_reward_name'
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update, remove, push, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD77vyKpxE-PDJhk4aS8N3_SBAIIwoXIKE",
+  authDomain: "livemusicrequests-71c75.firebaseapp.com",
+  databaseURL: "https://livemusicrequests-71c75-default-rtdb.firebaseio.com",
+  projectId: "livemusicrequests-71c75",
+  storageBucket: "livemusicrequests-71c75.firebasestorage.app",
+  messagingSenderId: "841403842500",
+  appId: "1:841403842500:web:4716afe909ddedec416e91"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
 const TWITCH_CLIENT_ID = 'bt9iq3fqob2gxmr1li2jecy6bm0ppf';
 
-let uid = "local_user";
-let userDisplayName = 'Streamer';
+let uid = null;
+let userDisplayName = '';
 let allItems = [];
 let twitchToken = null, twitchUserId = null, twitchUserLogin = null;
 let eventSubWs = null, wsSessionId = null, reconnectTimer = null;
@@ -308,7 +319,7 @@ const translations = {
     btn_apply_obs: "🎬 Застосувати до OBS", btn_applied_obs: "✓ Застосовано!",
     modal_title: "🎬 Посилання для OBS", modal_desc: "Додай як Browser Source в OBS. Розмір: 480×120px", modal_copy: "📋 Копіювати", modal_copied: "✓ Скопійовано!", modal_close: "Закрити",
     log_auth: "✓ Авторизовано як ", log_ws_open: "WebSocket відкрито", log_ws_err: "WS помилка", log_ws_close: "WS закрито, повтор через 10с...",
-    log_sub_ok: "✓ Підписка активна!", log_sub_err: "Помилка підписки: ", log_sub_old: "Видалено старих підписок: ", log_skip_reward: "Пропускаю (не та нагорода)", log_not_yt: "❌ Не YouTube посилання від ", log_firebase_err: "Помилка збереження: "
+    log_sub_ok: "✓ Підписка активна!", log_sub_err: "Помилка підписки: ", log_sub_old: "Видалено старих підписок: ", log_skip_reward: "Пропускаю (не та нагорода)", log_not_yt: "❌ Не YouTube посилання від ", log_firebase_err: "Firebase помилка: "
   },
   en: {
     title: "StreamDJ — Dashboard",
@@ -353,7 +364,7 @@ const translations = {
     btn_apply_obs: "🎬 Apply to OBS", btn_applied_obs: "✓ Applied!",
     modal_title: "🎬 OBS Link", modal_desc: "Add as Browser Source in OBS. Size: 480×120px", modal_copy: "📋 Copy", modal_copied: "✓ Copied!", modal_close: "Close",
     log_auth: "✓ Authorized as ", log_ws_open: "WebSocket opened", log_ws_err: "WS error", log_ws_close: "WS closed, retrying in 10s...",
-    log_sub_ok: "✓ Subscription active!", log_sub_err: "Subscription error: ", log_sub_old: "Removed old subscriptions: ", log_skip_reward: "Skipping (wrong reward)", log_not_yt: "❌ Not a YouTube link from ", log_firebase_err: "Save error: "
+    log_sub_ok: "✓ Subscription active!", log_sub_err: "Subscription error: ", log_sub_old: "Removed old subscriptions: ", log_skip_reward: "Skipping (wrong reward)", log_not_yt: "❌ Not a YouTube link from ", log_firebase_err: "Firebase error: "
   },
   ru: {
     title: "StreamDJ — панель",
@@ -398,7 +409,7 @@ const translations = {
     btn_apply_obs: "🎬 Применить в OBS", btn_applied_obs: "✓ Применено!",
     modal_title: "🎬 Ссылка для OBS", modal_desc: "Добавь как Browser Source в OBS. Размер: 480×120px", modal_copy: "📋 Копировать", modal_copied: "✓ Скопировано!", modal_close: "Закрыть",
     log_auth: "✓ Авторизован как ", log_ws_open: "WebSocket открыт", log_ws_err: "WS ошибка", log_ws_close: "WS закрыт, повтор через 10с...",
-    log_sub_ok: "✓ Подписка активна!", log_sub_err: "Ошибка подписки: ", log_sub_old: "Удалено старых подписок: ", log_skip_reward: "Пропускаю (не та награда)", log_not_yt: "❌ Не YouTube ссылка от ", log_firebase_err: "Ошибка сохранения: "
+    log_sub_ok: "✓ Подписка активна!", log_sub_err: "Ошибка подписки: ", log_sub_old: "Удалено старых подписок: ", log_skip_reward: "Пропускаю (не та награда)", log_not_yt: "❌ Не YouTube ссылка от ", log_firebase_err: "Firebase ошибка: "
   }
 };
 
@@ -473,27 +484,43 @@ window.changeLanguage = function(lang) {
 
 applyLanguage(currentLang);
 
-// Инициализация при старте (заменяет onAuthStateChanged из Firebase)
-document.addEventListener('DOMContentLoaded', () => {
+function qRef()  { return ref(db, `users/${uid}/queue`); }
+function ctlRef(){ return ref(db, `users/${uid}/control`); }
+function wtRef() { return ref(db, `users/${uid}/widget_theme`); }
+
+async function handleTwitchAuthRedirect() {
   const hash = window.location.hash;
-  if (hash.includes('access_token')) {
-    const token = new URLSearchParams(hash.replace(/^#/,'')).get('access_token');
-    if (token) {
-      localStorage.setItem('twitch_panel_token', token);
-      history.replaceState(null,'', window.location.pathname);
-    }
+  if (!hash.includes('access_token')) return false;
+  const token = new URLSearchParams(hash.replace(/^#/,'')).get('access_token');
+  if (!token) return false;
+  history.replaceState(null,'', window.location.pathname);
+  localStorage.setItem('twitch_panel_token', token);
+  await signInAnonymously(auth);
+  return true;
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    const handled = await handleTwitchAuthRedirect();
+    if (!handled) { window.location.href = './index.html'; }
+    return;
   }
+
+  uid = user.uid;
 
   const twitchTok = localStorage.getItem('twitch_panel_token');
   if (twitchTok) {
-    fetch('https://api.twitch.tv/helix/users', {
-      headers: {'Authorization':`Bearer ${twitchTok}`,'Client-Id':TWITCH_CLIENT_ID}
-    }).then(r => r.json()).then(d => {
-      if (d.data && d.data[0]) {
-        userDisplayName = d.data[0].display_name;
-        document.getElementById('user-subtitle').textContent = userDisplayName + translations[currentLang].subtitle_suffix;
+    try {
+      const r = await fetch('https://api.twitch.tv/helix/users', {
+        headers: {'Authorization':`Bearer ${twitchTok}`,'Client-Id':TWITCH_CLIENT_ID}
+      });
+      if (r.ok) {
+        const d = await r.json();
+        userDisplayName = d.data[0]?.display_name || 'Streamer';
       }
-    }).catch(()=>{});
+    } catch {}
+  } else {
+    userDisplayName = user.displayName || user.email || 'Streamer';
   }
 
   document.getElementById('user-subtitle').textContent = userDisplayName + translations[currentLang].subtitle_suffix;
@@ -504,16 +531,13 @@ document.addEventListener('DOMContentLoaded', () => {
   loadColors();
   loadWidgetTheme();
   loadRewardName();
-
-  if (twitchTok) {
-    initTwitchEventSub(twitchTok);
-  }
 });
 
-window.doLogout = function() {
+window.doLogout = async function() {
   localStorage.removeItem('twitch_panel_token');
   localStorage.removeItem('twitch_token');
   if (eventSubWs) eventSubWs.close();
+  await signOut(auth);
   window.location.href = './index.html';
 };
 
@@ -534,7 +558,6 @@ window.copyObsUrl = function() {
 
 function log(msg,type='info'){
   const box=document.getElementById('twitch-log');
-  if(!box) return;
   const line=document.createElement('div');
   line.className='log-'+type;
   line.textContent=new Date().toLocaleTimeString(currentLang==='en'?'en-US':'uk')+' '+msg;
@@ -639,13 +662,7 @@ async function handleRedemption(ev){
   let title='YouTube track',channel='';
   try{const r=await fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${vid}&format=json`);if(r.ok){const d=await r.json();title=d.title;channel=d.author_name;}}catch{}
   try{
-    // Локальное добавление трека в очередь вместо push() в Firebase
-    const localQueue = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-    const newKey = 'local_track_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-    localQueue[newKey] = {id:vid,title,channel,from:userName,ts:Date.now(),status:'pending',source:'twitch_points'};
-    localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(localQueue));
-    
-    initQueue(); // Перечитать и перерисовать
+    await push(qRef(),{id:vid,title,channel,from:userName,ts:Date.now(),status:'pending',source:'twitch_points'});
     log(`✅ "${title}" ${translations[currentLang].from} ${userName}`,'ok');
   }catch(e){log(translations[currentLang].log_firebase_err + e.message,'err');}
 }
@@ -658,7 +675,6 @@ function setTwitchStatus(state){
   const btn=document.getElementById('twitch-btn');
   const t = translations[currentLang];
   
-  if(!dot || !label || !btn) return;
   dot.className='twitch-dot '+(state==='connected'?'connected':state==='connecting'?'connecting':'');
   if(state==='connected'){
     label.textContent=`${t.tw_connected} (${twitchUserLogin||''})`;label.className='twitch-label connected';
@@ -678,19 +694,23 @@ function setTwitchStatus(state){
   }
 }
 
-window.saveRewardName=function(){
-  localStorage.setItem(STORAGE_KEYS.REWARD_NAME, document.getElementById('reward-name-input').value);
-};
-function loadRewardName(){
-  const saved = localStorage.getItem(STORAGE_KEYS.REWARD_NAME);
-  if(saved) document.getElementById('reward-name-input').value = saved;
-}
+setTimeout(()=>{
+  const t=localStorage.getItem('twitch_panel_token')||localStorage.getItem('twitch_token');
+  if(t&&uid) initTwitchEventSub(t);
+  else if(t) { const unsub=onAuthStateChanged(auth,u=>{if(u){unsub();initTwitchEventSub(t);}}); }
+},500);
 
-// ── КЕРУВАННЯ ЧЕРГОЮ ТА СТАТУСОМ ГРАННЯ ЧЕРЕЗ LOCALSTORAGE ────────────────────────────
+window.saveRewardName=function(){set(ref(db, `users/${uid}/settings/rewardName`),document.getElementById('reward-name-input').value);};
+function loadRewardName(){onValue(ref(db, `users/${uid}/settings/rewardName`),(s)=>{if(s.exists())document.getElementById('reward-name-input').value=s.val();});}
+
+// ── КЕРУВАННЯ ЧЕРГОЮ ТА СТАТУСОМ ГРАННЯ ────────────────────────────
 function initQueue(){
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  allItems = Object.entries(data).map(([k,v])=>({...v,key:k})).sort((a,b)=>a.ts-b.ts);
-  render();
+  onValue(qRef(),(snapshot)=>{
+    const data=snapshot.val();
+    if(!data){allItems=[];render();return;}
+    allItems=Object.entries(data).map(([k,v])=>({...v,key:k})).sort((a,b)=>a.ts-b.ts);
+    render();
+  });
 }
 
 function render(){
@@ -708,7 +728,7 @@ function render(){
     pl.innerHTML=pending.length===0?`<div class="empty">${t.no_requests}</div>`:pending.map(i=>`
       <div class="req-item">
         <div class="req-thumb"><img src="https://img.youtube.com/vi/${i.id}/default.jpg" alt=""></div>
-        <div class="req-info"><div class="req-name">${escapeHtml(i.title)}</div><div class="req-from">${t.from} ${escapeHtml(i.from)}</div></div>
+        <div class="req-info"><div class="req-name">${i.title}</div><div class="req-from">${t.from} ${i.from}</div></div>
         <div class="req-actions">
           <button class="btn-approve" onclick="approveTrack('${i.key}')">✓</button>
           <button class="btn-reject" onclick="reject('${i.key}')">✗</button>
@@ -722,81 +742,29 @@ function render(){
       <div class="queue-item ${i.status==='playing' ? 'playing-now' : ''}">
         ${i.status==='playing'?`<span class="now-pill">🔥 ${t.playing_pill}</span>`:`<span class="q-num">#${index+1}</span>`}
         <div class="q-info">
-          <div class="q-name">${escapeHtml(i.title)}${i.source==='twitch_points'?`<span class="twitch-pill">${t.points_pill}</span>`:''}</div>
-          <div class="q-from">${t.from} ${escapeHtml(i.from)}</div>
+          <div class="q-name">${i.title}${i.source==='twitch_points'?`<span class="twitch-pill">${t.points_pill}</span>`:''}</div>
+          <div class="q-from">${t.from} ${i.from}</div>
         </div>
         <button class="btn-del" onclick="reject('${i.key}')">✗</button>
       </div>`).join('');
   }
 }
 
-function escapeHtml(str) {
-  if(!str) return '';
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
+window.approveTrack=k=>update(ref(db,`users/${uid}/queue/${k}`),{status:'approved'});
+window.reject=k=>remove(ref(db,`users/${uid}/queue/${k}`));
+window.clearAll=()=>{if(!confirm(translations[currentLang].confirm_clear))return;allItems.forEach(t=>remove(ref(db,`users/${uid}/queue/${t.key}`)));};
+window.approveAll=()=>allItems.filter(t=>t.status==='pending').forEach(t=>update(ref(db,`users/${uid}/queue/${t.key}`),{status:'approved'}));
+window.rejectAll=()=>{if(!confirm(translations[currentLang].confirm_reject_all))return;allItems.filter(t=>t.status==='pending').forEach(t=>remove(ref(db,`users/${uid}/queue/${t.key}`)));};
 
-window.approveTrack = function(k) {
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  if (data[k]) {
-    data[k].status = 'approved';
-    localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(data));
-    initQueue();
-  }
+// Кнопки взаємодії з медіаплеєром
+window.stopCurrentTrack=()=>set(ctlRef(),{action:'pause',ts:Date.now()});
+window.resumeCurrentTrack=()=>set(ctlRef(),{action:'play',ts:Date.now()});
+window.skipCurrent=()=>{
+  // Оскільки плеєр має перемикати треки, команда надсилається йому
+  set(ctlRef(),{action:'skip',ts:Date.now()});
+  // Якщо плеєр офлайн, ви можете самостійно видалити перший трек кнопкою "✗" поруч із ним
 };
-
-window.reject = function(k) {
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  if (data[k]) {
-    delete data[k];
-    localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(data));
-    initQueue();
-  }
-};
-
-window.clearAll = function() {
-  if(!confirm(translations[currentLang].confirm_clear)) return;
-  localStorage.setItem(STORAGE_KEYS.QUEUE, '{}');
-  initQueue();
-};
-
-window.approveAll = function() {
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  Object.keys(data).forEach(key => {
-    if (data[key].status === 'pending') data[key].status = 'approved';
-  });
-  localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(data));
-  initQueue();
-};
-
-window.rejectAll = function() {
-  if(!confirm(translations[currentLang].confirm_reject_all)) return;
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  Object.keys(data).forEach(key => {
-    if (data[key].status === 'pending') delete data[key];
-  });
-  localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(data));
-  initQueue();
-};
-
-// Локальные команды плееру (для считывания плеером из этого же браузера)
-function setLocalControl(action) {
-  localStorage.setItem(STORAGE_KEYS.CONTROL, JSON.stringify({action: action, ts: Date.now()}));
-}
-
-window.stopCurrentTrack = () => setLocalControl('pause');
-window.resumeCurrentTrack = () => setLocalControl('play');
-window.skipCurrent = function() {
-  setLocalControl('skip');
-  // Имитируем поведение плеера в локальном режиме: переводим текущий трек или удаляем его
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUEUE) || '{}');
-  const playingTrack = Object.entries(data).find(([k,v]) => v.status === 'playing');
-  if (playingTrack) {
-    delete data[playingTrack[0]];
-    localStorage.setItem(STORAGE_KEYS.QUEUE, JSON.stringify(data));
-    initQueue();
-  }
-};
-window.replayCurrentTrack = () => setLocalControl('replay');
+window.replayCurrentTrack=()=>set(ctlRef(),{action:'replay',ts:Date.now()});
 
 // ── TABS ──────────────────────────────────────────────────────────
 window.switchTab=function(name){
@@ -822,32 +790,9 @@ window.applyPreset=function(name){document.querySelectorAll('.preset-btn:not([id
 window.liveColor=(cssVar,val)=>document.documentElement.style.setProperty(cssVar,val);
 window.syncHex=function(colorInput){const hexEl=document.getElementById('h-'+colorInput.id.slice(2));if(hexEl)hexEl.value=colorInput.value;};
 window.hexInput=function(cssVar,colorId,hexInput){const val=hexInput.value.trim();if(/^#[0-9a-fA-F]{6}$/.test(val)){document.getElementById(colorId).value=val;liveColor(cssVar,val);}};
-
-window.saveColors=function(){
-  const saved={};
-  COLOR_FIELDS.forEach(f=>{
-    const v=document.getElementById(f.id)?.value;
-    if(v) saved[f.css]=v;
-  });
-  localStorage.setItem(STORAGE_KEYS.PANEL_THEME, JSON.stringify(saved));
-  const btn=document.getElementById('btn-save-colors');
-  btn.textContent=translations[currentLang].btn_saved;
-  setTimeout(()=>btn.textContent=translations[currentLang].btn_save,1500);
-};
-
-window.resetColors=function(){
-  localStorage.removeItem(STORAGE_KEYS.PANEL_THEME);
-  applyPreset('red');
-};
-
-function loadColors(){
-  const saved = localStorage.getItem(STORAGE_KEYS.PANEL_THEME);
-  if(saved){
-    const vars = JSON.parse(saved);
-    applyVars(vars);
-    syncPickersFromVars(vars);
-  }
-}
+window.saveColors=function(){const saved={};COLOR_FIELDS.forEach(f=>{const v=document.getElementById(f.id)?.value;if(v)saved[f.css]=v;});set(ref(db, `users/${uid}/panel_theme`), saved);const btn=document.getElementById('btn-save-colors');btn.textContent=translations[currentLang].btn_saved;setTimeout(()=>btn.textContent=translations[currentLang].btn_save,1500);};
+window.resetColors=function(){remove(ref(db, `users/${uid}/panel_theme`));applyPreset('red');};
+function loadColors(){onValue(ref(db, `users/${uid}/panel_theme`),(snap)=>{if(snap.exists()){const vars=snap.val();applyVars(vars);syncPickersFromVars(vars);}});}
 
 // ── WIDGET THEME ──────────────────────────────────────────────────
 const WIDGET_PRESETS={
@@ -866,29 +811,14 @@ function applyWidgetPickers(t){Object.entries(t).forEach(([k,v])=>{const el=docu
 window.applyWidgetPreset=function(name){document.querySelectorAll('[id^="wp-"]').forEach(b=>b.classList.remove('active'));document.getElementById('wp-'+name)?.classList.add('active');applyWidgetPickers(WIDGET_PRESETS[name]);};
 window.syncHexW=function(colorInput){const hexEl=document.getElementById('wh-'+colorInput.id.slice(2));if(hexEl)hexEl.value=colorInput.value;};
 window.hexInputW=function(colorId,hexInput){const val=hexInput.value.trim();if(/^#[0-9a-fA-F]{6}$/.test(val))document.getElementById(colorId).value=val;};
-
-window.saveWidgetTheme=function(){
+window.saveWidgetTheme=async function(){
   const theme={bg:document.getElementById('w-bg').value,border:document.getElementById('w-border').value,title:document.getElementById('w-title').value,from:document.getElementById('w-from').value,label:document.getElementById('w-label').value,pill:document.getElementById('w-pill').value,fontsize:parseInt(document.getElementById('w-fontsize').value)||13,scroll:parseInt(document.getElementById('w-scroll').value)||12};
-  localStorage.setItem(STORAGE_KEYS.WIDGET_THEME, JSON.stringify(theme));
+  await set(wtRef(),theme);
   const btn=document.getElementById('btn-apply-obs');
-  if(btn) {
-    btn.textContent=translations[currentLang].btn_applied_obs;
-    setTimeout(()=>btn.textContent=translations[currentLang].btn_apply_obs,1500);
-  }
+  btn.textContent=translations[currentLang].btn_applied_obs;setTimeout(()=>btn.textContent=translations[currentLang].btn_apply_obs,1500);
 };
-
-window.resetWidgetTheme=function(){
-  localStorage.setItem(STORAGE_KEYS.WIDGET_THEME, JSON.stringify(DEFAULT_WIDGET));
-  applyWidgetPickers(DEFAULT_WIDGET);
-};
-
-function loadWidgetTheme(){
-  const saved = localStorage.getItem(STORAGE_KEYS.WIDGET_THEME);
-  if(saved){
-    const t = JSON.parse(saved);
-    applyWidgetPickers(t);
-  }
-}
+window.resetWidgetTheme=async function(){await set(wtRef(),DEFAULT_WIDGET);applyWidgetPickers(DEFAULT_WIDGET);};
+function loadWidgetTheme(){onValue(wtRef(),(snap)=>{const t=snap.val();if(t)applyWidgetPickers(t);});}
 </script>
 </body>
 </html>
