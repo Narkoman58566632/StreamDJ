@@ -457,7 +457,7 @@ function applyLocalization() {
   document.getElementById('b-skip').textContent = t.b_skip;
   document.getElementById('b-replay').textContent = t.b_replay;
   document.getElementById('b-clear').textContent = t.b_clear;
-  document.getElementById('s-queue_title').textContent = t.s_queue_title;
+  document.getElementById('s-queue-title').textContent = t.s_queue_title;
   document.getElementById('s-my-playlists').textContent = t.s_my_playlists;
   document.getElementById('lbl-fallback').textContent = t.lbl_fallback;
   document.getElementById('mode-off').textContent = t.mode_off;
@@ -528,9 +528,10 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     userDisplayName = user.displayName || user.email || 'Стример';
   }
-  document.getElementById('user-subtitle').textContent = userDisplayName + LANGUAGES[currentLang].subtitle_suffix;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  applyLocalization();
+  document.getElementById('user-subtitle').textContent = userDisplayName + LANGUAGES[currentLang].subtitle_suffix;
   initQueue();
   loadColors();
   loadWidgetTheme();
