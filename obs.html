@@ -190,14 +190,6 @@ function markDoneAndNext() {
   });
 }
 
-function nextTrack() {
-  if (currentTrack) {
-    // Удаляем завершенный/пропущенный трек из Firebase
-    remove(ref(db, `users/${uid}/queue/${currentTrack.key}`));
-    currentTrack = null;
-  }
-}
-  
 function updateUI() {
   const playing = queue.find(t => t.status === 'playing');
   const rest = queue.filter(t => t.status === 'approved');
