@@ -510,6 +510,8 @@ function rewardCfgRef() { return ref(db, `users/${uid}/reward_config`); }
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
+    // If twitch_panel_token exists — signInAnonymously is in progress, wait
+    if (localStorage.getItem('twitch_panel_token')) return;
     const handled = await handleTwitchAuthRedirect();
     if (!handled) { window.location.href = './index.html'; }
     return;
@@ -526,8 +528,6 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     userDisplayName = user.displayName || user.email || 'Стример';
   }
-  // Apply localization only after user is confirmed
-  applyLocalization();
   document.getElementById('user-subtitle').textContent = userDisplayName + LANGUAGES[currentLang].subtitle_suffix;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
