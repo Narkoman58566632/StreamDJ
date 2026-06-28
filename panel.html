@@ -1096,20 +1096,8 @@ window.saveColors=function(){
   const btn=document.getElementById('lbl-save-colors');
   btn.textContent='✓ OK';setTimeout(()=>btn.textContent=S.saveColors,1500);
 };
-window.resetColors=function(){localStorage.removeItem('dj_colors_'+uid);applyPreset('red');};
-function loadColors(){
-  const saved=localStorage.getItem('dj_colors_'+uid);
-  if(saved){
-    try{
-      const vars=JSON.parse(saved);
-      applyVars(vars);
-      syncPickersFromVars(vars);
-    }catch{}
-  } else {
-    // Если настроек нет, автоматически включаем пресет черной темы ('dark')
-    applyPreset('dark');
-  }
-}
+window.resetColors=function(){localStorage.removeItem('dj_colors_'+uid);applyPreset('dark');};
+function loadColors(){const saved=localStorage.getItem('dj_colors_'+uid);if(saved){try{const vars=JSON.parse(saved);applyVars(vars);syncPickersFromVars(vars);}catch{}}}
   
 // ── WIDGET THEME ──────────────────────────────────────────────────
 const WIDGET_PRESETS={
