@@ -10,13 +10,12 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;padding:0;color:var(--text);}
 :root{
-  /* По умолчанию при первой загрузке стоит черная тема */
-  --bg:#0a0a0a;--bg2:#161616;--bg3:#222222;
-  --border:#2a2a2a;--border2:#3a3a3a;
-  --accent:#ffffff;--accent2:#b3b3b3;
-  --text:#e0e0e0;--text2:#888888;--text3:#ffffff;
-  --green:#7dcc7d;--green-bg:#1a3d1a;--green-border:#2a5a2a;
-  --red-btn:rgba(255,68,68,0.1);--red-btn-text:#ff6868;--twitch:#6441a5;
+--bg:#0a0a0a;--bg2:#161616;--bg3:#222222;
+--border:#2a2a2a;--border2:#3a3a3a;
+--accent:#ffffff;--accent2:#b3b3b3;
+--text:#e0e0e0;--text2:#888888;--text3:#ffffff;
+--green:#7dcc7d;--green-bg:#1a3d1a;--green-border:#2a5a2a;
+--red-btn:rgba(255,68,68,0.1);--red-btn-text:#ff6868;--twitch:#6441a5;
 }
 .tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;overflow-x:auto;}
 .tab{padding:14px 18px;font-size:12px;font-family:'Unbounded',sans-serif;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
@@ -86,19 +85,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 .theme-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .preset-btn{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;flex-shrink:0;}
 .preset-btn:hover,.preset-btn.active{border-color:var(--text);transform:scale(1.1);}
-.settings-save {
-  background: var(--accent);
-  color: var(--bg); /* Текст станет черным на белой кнопке */
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 24px;
-  font-size: 13px;
-  font-family: 'Unbounded', sans-serif;
-  cursor: pointer;
-  margin-top: 16px;
-  transition: opacity 0.2s;
-}
+.settings-save{background:var(--accent);color:var(--bg);font-weight:bold;border:none;border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Unbounded',sans-serif;cursor:pointer;margin-top:16px;transition:opacity 0.2s;}
 .settings-save:hover{opacity:0.9;}
 .settings-reset{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Unbounded',sans-serif;cursor:pointer;margin-top:16px;margin-left:8px;transition:all 0.2s;}
 .settings-reset:hover{color:var(--text);border-color:var(--text2);}
@@ -110,32 +97,13 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 .modal p{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;}
 .obs-url-box{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text3);font-family:monospace;word-break:break-all;margin-bottom:12px;}
 .modal-btns{display:flex;gap:8px;}
-.modal-copy {
-  background: var(--accent);
-  color: var(--bg); /* Станет черным, если кнопка белая */
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 18px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'Unbounded', sans-serif;
-}
+.modal-copy{background:var(--accent);color:var(--bg);font-weight:bold;border:none;border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer;font-family:'Unbounded',sans-serif;}
 .modal-close{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer;}
 .loading-screen{position:fixed;inset:0;background:#0d0d0d;display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
 .loading-screen .logo{font-family:'Unbounded',sans-serif;font-size:24px;color:#fff;}
 .loading-screen .logo span{color:#6441a5;}
 .loading-screen p{font-size:12px;color:#555;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-.playback-status{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;}
-.ps-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background 0.3s;}
-.ps-dot.playing{background:#00e676;box-shadow:0 0 8px #00e676aa;animation:pulse 1.5s ease-in-out infinite;}
-.ps-dot.paused{background:#ffaa00;}
-.ps-dot.stopped{background:var(--border2);}
-.ps-label{font-size:12px;color:var(--text2);font-family:'Unbounded',sans-serif;}
-.ps-label.playing{color:#00e676;}
-.ps-label.paused{color:#ffaa00;}
-.ps-track{font-size:11px;color:var(--text2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:4px;}
 .pl-add-row{display:flex;gap:8px;margin-bottom:12px;}
 .pl-url-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text3);font-size:13px;font-family:'Inter',sans-serif;outline:none;}
 .pl-url-input:focus{border-color:var(--green-border);}
@@ -161,7 +129,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 </style>
 </head>
 <body>
-
 <div class="loading-screen" id="loading">
   <div class="logo">Stream<span>DJ</span></div>
   <p id="load-text">Завантаження...</p>
@@ -213,11 +180,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
         <button class="music-btn" onclick="replayCurrentTrack()"><span class="icon">🔄</span><span id="b-replay">Спочатку</span></button>
         <button class="music-btn danger" onclick="clearAll()"><span class="icon">🗑️</span><span id="b-clear">Очистити все</span></button>
       </div>
-      <div class="playback-status" id="playback-status">
-        <div class="ps-dot stopped" id="ps-dot"></div>
-        <span class="ps-label stopped" id="ps-label">—</span>
-        <span class="ps-track" id="ps-track"></span>
-      </div>
     </div>
     <div class="section">
       <div class="section-title"><span id="s-queue-title">черга треків</span> <span class="badge" id="queue-badge">0</span></div>
@@ -241,7 +203,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
       <div class="pl-status" id="my-pl-status"></div>
       <div id="my-playlists-list"><div class="empty">плейлистів немає</div></div>
     </div>
-
     <div class="section">
       <div class="section-title" id="s-viewer-playlists">🟣 плейлисти від глядачів (channel points)</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;" id="lbl-viewer-desc">
@@ -278,12 +239,12 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
     <div class="section">
       <div class="section-title" id="s-panel-theme">тема панелі</div>
       <div class="theme-presets">
-        <div class="preset-btn"        id="preset-dark"   style="background:linear-gradient(135deg,#0a0a0a,#2a2a2a)" onclick="applyPreset('dark')"></div>
-        <div class="preset-btn"        id="preset-red"    style="background:linear-gradient(135deg,#1a0000,#c0392b)" onclick="applyPreset('red')"></div>
-        <div class="preset-btn"        id="preset-blue"   style="background:linear-gradient(135deg,#000a1a,#1a3a6b)" onclick="applyPreset('blue')"></div>
-        <div class="preset-btn"        id="preset-purple" style="background:linear-gradient(135deg,#0d001a,#4a1a7a)" onclick="applyPreset('purple')"></div>
-        <div class="preset-btn"        id="preset-green"  style="background:linear-gradient(135deg,#001a0a,#1a5a2a)" onclick="applyPreset('green')"></div>
-        <div class="preset-btn"        id="preset-orange" style="background:linear-gradient(135deg,#1a0800,#8b3a00)" onclick="applyPreset('orange')"></div>
+        <div class="preset-btn" id="preset-dark" style="background:linear-gradient(135deg,#0a0a0a,#2a2a2a)" onclick="applyPreset('dark')"></div>
+        <div class="preset-btn" id="preset-red" style="background:linear-gradient(135deg,#1a0000,#c0392b)" onclick="applyPreset('red')"></div>
+        <div class="preset-btn" id="preset-blue" style="background:linear-gradient(135deg,#000a1a,#1a3a6b)" onclick="applyPreset('blue')"></div>
+        <div class="preset-btn" id="preset-purple" style="background:linear-gradient(135deg,#0d001a,#4a1a7a)" onclick="applyPreset('purple')"></div>
+        <div class="preset-btn" id="preset-green" style="background:linear-gradient(135deg,#001a0a,#1a5a2a)" onclick="applyPreset('green')"></div>
+        <div class="preset-btn" id="preset-orange" style="background:linear-gradient(135deg,#1a0800,#8b3a00)" onclick="applyPreset('orange')"></div>
       </div>
       <div class="settings-grid">
         <div class="setting-row"><div class="setting-label" id="l-c-bg">Фон сторінки</div><div class="color-pick"><input type="color" id="c-bg" value="#0a0a0a" oninput="liveColor('--bg',this.value);syncHex(this)"><input class="color-hex" type="text" id="h-bg" value="#0a0a0a" oninput="hexInput('--bg','c-bg',this)"></div></div>
@@ -295,18 +256,17 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
       </div>
       <div><button class="settings-save" onclick="saveColors()" id="b-save-theme">💾 Зберегти</button><button class="settings-reset" onclick="resetColors()" id="b-reset-theme">↺ Скинути</button></div>
     </div>
-
     <div class="section">
       <div class="section-title" id="s-obs-theme">🎬 вигляд віджету в obs</div>
       <div class="theme-presets">
-        <div class="preset-btn" id="wp-dark"   style="background:linear-gradient(135deg,#0a0a0a,#2a2a2a)" onclick="applyWidgetPreset('dark')"></div>
-        <div class="preset-btn" id="wp-red"    style="background:linear-gradient(135deg,#140000,#c0392b)" onclick="applyWidgetPreset('red')"></div>
-        <div class="preset-btn" id="wp-blue"   style="background:linear-gradient(135deg,#000a1a,#1a3a6b)" onclick="applyWidgetPreset('blue')"></div>
+        <div class="preset-btn" id="wp-dark" style="background:linear-gradient(135deg,#0a0a0a,#2a2a2a)" onclick="applyWidgetPreset('dark')"></div>
+        <div class="preset-btn" id="wp-red" style="background:linear-gradient(135deg,#140000,#c0392b)" onclick="applyWidgetPreset('red')"></div>
+        <div class="preset-btn" id="wp-blue" style="background:linear-gradient(135deg,#000a1a,#1a3a6b)" onclick="applyWidgetPreset('blue')"></div>
         <div class="preset-btn" id="wp-purple" style="background:linear-gradient(135deg,#0d001a,#4a1a7a)" onclick="applyWidgetPreset('purple')"></div>
-        <div class="preset-btn" id="wp-green"  style="background:linear-gradient(135deg,#001a0a,#1a5a2a)" onclick="applyWidgetPreset('green')"></div>
+        <div class="preset-btn" id="wp-green" style="background:linear-gradient(135deg,#001a0a,#1a5a2a)" onclick="applyWidgetPreset('green')"></div>
         <div class="preset-btn" id="wp-orange" style="background:linear-gradient(135deg,#1a0800,#8b3a00)" onclick="applyWidgetPreset('orange')"></div>
-        <div class="preset-btn" id="wp-cyber"  style="background:linear-gradient(135deg,#000d1a,#00c8ff)" onclick="applyWidgetPreset('cyber')"></div>
-        <div class="preset-btn" id="wp-gold"   style="background:linear-gradient(135deg,#1a1400,#c8a000)" onclick="applyWidgetPreset('gold')"></div>
+        <div class="preset-btn" id="wp-cyber" style="background:linear-gradient(135deg,#000d1a,#00c8ff)" onclick="applyWidgetPreset('cyber')"></div>
+        <div class="preset-btn" id="wp-gold" style="background:linear-gradient(135deg,#1a1400,#c8a000)" onclick="applyWidgetPreset('gold')"></div>
       </div>
       <div class="settings-grid">
         <div class="setting-row"><div class="setting-label" id="l-w-bg">Фон віджету</div><div class="color-pick"><input type="color" id="w-bg" value="#0a0a0a" oninput="syncHexW(this)"><input class="color-hex" type="text" id="wh-bg" value="#0a0a0a" oninput="hexInputW('w-bg',this)"></div></div>
@@ -326,7 +286,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, update, remove, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD77vyKpxE-PDJhk4aS8N3_SBAIIwoXIKE",
@@ -340,11 +300,9 @@ const firebaseConfig = {
 };
 
 const YOUTUBE_API_KEY = 'AIzaSyAUm7ZI7g_zbkB5BoZURZdQ1UUdzllTomg';
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-
 const TWITCH_CLIENT_ID = 'bt9iq3fqob2gxmr1li2jecy6bm0ppf';
 
 let uid = null;
@@ -352,95 +310,95 @@ let userDisplayName = '';
 let allItems = [];
 let twitchToken = null, twitchUserId = null, twitchUserLogin = null;
 let eventSubWs = null, wsSessionId = null, reconnectTimer = null;
-let myPlaylists = []; 
-let fallbackMode = 'off'; 
+let myPlaylists = [];
+let fallbackMode = 'off';
 let fallbackIndex = 0;
 let activeFallbackPlaylistId = null;
 
 const LANGUAGES = {
   uk: {
-    loading: "Завантаження...", subtitle_suffix: " — керування музикою", obs_btn: "🎬 OBS лінк", logout: "Вийти",
-    tab_queue: "🎵 Черга", tab_playlists: "📂 Плейлисти", tab_twitch: "🟣 Twitch", tab_settings: "⚙️ Вигляд",
-    s_playback: "відтворення", ps_playing: "Грає", ps_paused: "Пауза", ps_stopped: "Зупинено", b_play: "Відтворити", b_pause: "Пауза", b_skip: "Пропустити", b_replay: "Спочатку", b_clear: "Очистити все",
-    s_queue_title: "черга треків", empty_queue: "черга порожня", playing_now: "grає", from_user: "від", confirm_clear: "Очистити всю чергу?",
-    s_my_playlists: "📂 мої плейлисти", lbl_fallback: "Коли черга порожня:", mode_off: "Нічого", mode_order: "По порядку", mode_shuffle: "Рандом 🔀",
-    pl_placeholder: "Посилання на YouTube плейлист...", pl_add: "+ Додати", empty_playlists: "плейлистів немає", pl_tracks: "треків",
-    pl_active: "активний", pl_play: "▶ Грати", confirm_del_pl: "Видалити плейлист?", pl_status_key_error: "❌ Спочатку встав YouTube API ключ у код!",
-    pl_status_url_error: "❌ Не вірне посилання. Вставте посилання на YouTube плейлист.", pl_status_loading_info: "⏳ Завантажую інформацію...",
-    pl_status_loading_tracks: "⏳ Завантажую треки...", pl_status_empty_error: "❌ Плейлист порожній або приватний.", pl_status_success: 'додано',
-    pl_status_started: 'Почав грати', s_viewer_playlists: "🟣 плейлисти від глядачів (channel points)",
-    lbl_viewer_desc: "Глядач кидає посилання на YouTube плейлист — всі треки автоматично додаються в чергу.<br>Назва нагороди для плейлистів:",
-    lbl_reward_pl_name: "назва нагороди для плейлиста (на Twitch)", reward_pl_placeholder: "📂 Замов плейлист",
-    lbl_reward_hint: "⚠️ Має співпадати з назвою нагороди в Twitch Channel Points", lbl_max_tracks: "Макс. треків з одного плейлиста глядача:",
-    s_twitch_points: "🟣 twitch channel points", tw_disconnected: "не підключено", tw_connecting: "підключення...", tw_connected: "підключено",
-    tw_connect_btn: "Підключити Twitch", tw_disconnect_btn: "Відключити", tw_info_disconnected: "Підключи Twitch щоб отримувати треки через Channel Points.",
-    tw_info_connected: "Connected as {user}. Слухаю Channel Points...", lbl_reward_track_name: "назва нагороди для треку (точна, як на Twitch)",
-    reward_track_placeholder: "🎵 Замов трек", s_panel_theme: "тема панелі", l_c_bg: "Фон сторінки", l_c_bg2: "Фон блоків",
-    l_c_accent: "Акцент", l_c_border: "Рамки", l_c_text: "Текст", l_c_text2: "Текст другорядний", b_save: "💾 Зберегти", b_reset: "↺ Скинути",
-    saved_ok: "✓ Збережено!", applied_ok: "✓ Застосовано!", s_obs_theme: "🎬 вигляд віджету в obs", l_w_bg: "Фон віджету",
-    l_w_border: "Колір рамки", l_w_title: "Назва треку", l_w_from: "Колір \"від ...\"", l_w_label: "Колір \"grає\"",
-    l_w_pill: "Черга (пілюлі)", l_w_fontsize: "Розмір тексту (px)", l_w_scroll: "Швидкість прокрутки (сек)", b_save_obs: "🎬 Застосувати до OBS",
-    m_obs_title: "🎬 Посилання для OBS", m_obs_desc: "Додай як Browser Source в OBS. Розмір: 480×120px", m_obs_copy: "📋 Копіювати",
-    m_obs_copied: "✓ Скопійовано!", m_obs_close: "Закрити", log_auth_ok: "✓ Авторизовано як ", log_ws_open: "WebSocket відкрито",
-    log_ws_err: "WS помилка", log_ws_close: "WS закрито, повтор через 10с...", log_sub_old: "Видалено {num} стару підписку",
-    log_sub_ok: "✓ Підписка активна!", log_skip_reward: "Пропускаю (не та нагорода)", log_not_url: "❌ Не YouTube посилання від ",
-    log_not_pl: "❌ Не плейлист від ", log_firebase_err: "Firebase помилка: "
+    loading:"Завантаження...",subtitle_suffix:" — керування музикою",obs_btn:"🎬 OBS лінк",logout:"Вийти",
+    tab_queue:"🎵 Черга",tab_playlists:"📂 Плейлисти",tab_twitch:"🟣 Twitch",tab_settings:"⚙️ Вигляд",
+    s_playback:"відтворення",b_play:"Відтворити",b_pause:"Пауза",b_skip:"Пропустити",b_replay:"Спочатку",b_clear:"Очистити все",
+    s_queue_title:"черга треків",empty_queue:"черга порожня",playing_now:"grає",from_user:"від",confirm_clear:"Очистити всю чергу?",
+    s_my_playlists:"📂 мої плейлисти",lbl_fallback:"Коли черга порожня:",mode_off:"Нічого",mode_order:"По порядку",mode_shuffle:"Рандом 🔀",
+    pl_placeholder:"Посилання на YouTube плейлист...",pl_add:"+ Додати",empty_playlists:"плейлистів немає",pl_tracks:"треків",
+    pl_active:"активний",pl_play:"▶ Грати",confirm_del_pl:"Видалити плейлист?",pl_status_key_error:"❌ Спочатку встав YouTube API ключ у код!",
+    pl_status_url_error:"❌ Не вірне посилання. Вставте посилання на YouTube плейлист.",pl_status_loading_info:"⏳ Завантажую інформацію...",
+    pl_status_loading_tracks:"⏳ Завантажую треки...",pl_status_empty_error:"❌ Плейлист порожній або приватний.",pl_status_success:'додано',
+    pl_status_started:'Почав грати',s_viewer_playlists:"🟣 плейлисти від глядачів (channel points)",
+    lbl_viewer_desc:"Глядач кидає посилання на YouTube плейлист — всі треки автоматично додаються в чергу.<br>Назва нагороди для плейлистів:",
+    lbl_reward_pl_name:"назва нагороди для плейлиста (на Twitch)",reward_pl_placeholder:"📂 Замов плейлист",
+    lbl_reward_hint:"⚠️ Має співпадати з назвою нагороди в Twitch Channel Points",lbl_max_tracks:"Макс. треків з одного плейлиста глядача:",
+    s_twitch_points:"🟣 twitch channel points",tw_disconnected:"не підключено",tw_connecting:"підключення...",tw_connected:"підключено",
+    tw_connect_btn:"Підключити Twitch",tw_disconnect_btn:"Відключити",tw_info_disconnected:"Підключи Twitch щоб отримувати треки через Channel Points.",
+    tw_info_connected:"Connected as {user}. Слухаю Channel Points...",lbl_reward_track_name:"назва нагороди для треку (точна, як на Twitch)",
+    reward_track_placeholder:"🎵 Замов трек",s_panel_theme:"тема панелі",l_c_bg:"Фон сторінки",l_c_bg2:"Фон блоків",
+    l_c_accent:"Акцент",l_c_border:"Рамки",l_c_text:"Текст",l_c_text2:"Текст другорядний",b_save:"💾 Зберегти",b_reset:"↺ Скинути",
+    saved_ok:"✓ Збережено!",applied_ok:"✓ Застосовано!",s_obs_theme:"🎬 вигляд віджету в obs",l_w_bg:"Фон віджету",
+    l_w_border:"Колір рамки",l_w_title:"Назва треку",l_w_from:'Колір "від ..."',l_w_label:'Колір "grає"',
+    l_w_pill:"Черга (пілюлі)",l_w_fontsize:"Розмір тексту (px)",l_w_scroll:"Швидкість прокрутки (сек)",b_save_obs:"🎬 Застосувати до OBS",
+    m_obs_title:"🎬 Посилання для OBS",m_obs_desc:"Додай як Browser Source в OBS. Розмір: 480×120px",m_obs_copy:"📋 Копіювати",
+    m_obs_copied:"✓ Скопійовано!",m_obs_close:"Закрити",log_auth_ok:"✓ Авторизовано як ",log_ws_open:"WebSocket відкрито",
+    log_ws_err:"WS помилка",log_ws_close:"WS закрито, повтор через 10с...",log_sub_old:"Видалено {num} стару підписку",
+    log_sub_ok:"✓ Підписка активна!",log_skip_reward:"Пропускаю (не та нагорода)",log_not_url:"❌ Не YouTube посилання від ",
+    log_not_pl:"❌ Не плейлист від ",log_firebase_err:"Firebase помилка: "
   },
   ru: {
-    loading: "Загрузка...", subtitle_suffix: " — управление музыкой", obs_btn: "🎬 OBS линк", logout: "Выйти",
-    tab_queue: "🎵 Очередь", tab_playlists: "📂 Плейлисты", tab_twitch: "🟣 Twitch", tab_settings: "⚙️ Вид панели",
-    s_playback: "воспроизведение", ps_playing: "Играет", ps_paused: "Пауза", ps_stopped: "Остановлено", b_play: "Включить", b_pause: "Пауза", b_skip: "Пропустить", b_replay: "Сначала", b_clear: "Очистить всё",
-    s_queue_title: "очередь треков", empty_queue: "очередь пуста", playing_now: "играет", from_user: "от", confirm_clear: "Очистить всю очередь?",
-    s_my_playlists: "📂 мои плейлисты", lbl_fallback: "Если очередь пуста:", mode_off: "Ничего", mode_order: "По порядку", mode_shuffle: "Рандом 🔀",
-    pl_placeholder: "Ссылка на YouTube плейлист...", pl_add: "+ Добавить", empty_playlists: "плейлистов нет", pl_tracks: "треков",
-    pl_active: "активен", pl_play: "▶ Играть", confirm_del_pl: "Удалить плейлист?", pl_status_key_error: "❌ Сначала вставь YouTube API ключ в код!",
-    pl_status_url_error: "❌ Неверная ссылка. Вставьте ссылку на YouTube плейлист.", pl_status_loading_info: "⏳ Загружаю информацию...",
-    pl_status_loading_tracks: "⏳ Загружаю треки...", pl_status_empty_error: "❌ Плейлист пуст или приватный.", pl_status_success: 'добавлен',
-    pl_status_started: 'Начал играть', s_viewer_playlists: "🟣 плейлисты от зрителей (channel points)",
-    lbl_viewer_desc: "Зритель кидает ссылку на YouTube плейлист — все треки автоматически добавляются в очередь.<br>Название награды для плейлистов:",
-    lbl_reward_pl_name: "название награды для плейлиста (на Twitch)", reward_pl_placeholder: "📂 Закажи плейлист",
-    lbl_reward_hint: "⚠️ Должно совпадать с названием награды в Twitch Channel Points", lbl_max_tracks: "Макс. треков из одного плейлиста зрителя:",
-    s_twitch_points: "🟣 twitch channel points", tw_disconnected: "не подключено", tw_connecting: "подключение...", tw_connected: "подключено",
-    tw_connect_btn: "Подключить Twitch", tw_disconnect_btn: "Отключить", tw_info_disconnected: "Подключи Twitch чтобы получать треки через Channel Points.",
-    tw_info_connected: "Подключено как {user}. Слушаю Channel Points...", lbl_reward_track_name: "название награды для трека (точное, как на Twitch)",
-    reward_track_placeholder: "🎵 Закажи трек", s_panel_theme: "тема панели", l_c_bg: "Фон страницы", l_c_bg2: "Фон блоков",
-    l_c_accent: "Акцент", l_c_border: "Рамки", l_c_text: "Текст", l_c_text2: "Текст второстепенный", b_save: "💾 Сохранить", b_reset: "↺ Сбросить",
-    saved_ok: "✓ Сохранено!", applied_ok: "✓ Применено!", s_obs_theme: "🎬 вид виджета в obs", l_w_bg: "Фон виджета",
-    l_w_border: "Цвет рамки", l_w_title: "Название трека", l_w_from: "Цвет \"от ...\"", l_w_label: "Цвет \"играет\"",
-    l_w_pill: "Очередь (пилюли)", l_w_fontsize: "Размер текста (px)", l_w_scroll: "Скорость прокрутки (сек)", b_save_obs: "🎬 Применить в OBS",
-    m_obs_title: "🎬 Ссылка для OBS", m_obs_desc: "Добавь как Browser Source в OBS. Размер: 480×120px", m_obs_copy: "📋 Копировать",
-    m_obs_copied: "✓ Скопировано!", m_obs_close: "Закрыть", log_auth_ok: "✓ Авторизован как ", log_ws_open: "WebSocket открыт",
-    log_ws_err: "WS ошибка", log_ws_close: "WS закрыт, повтор через 10с...", log_sub_old: "Удалено {num} старых подписок",
-    log_sub_ok: "✓ Подписка активна!", log_skip_reward: "Пропускаю (не та награда)", log_not_url: "❌ Не YouTube ссылка от ",
-    log_not_pl: "❌ Не плейлист от ", log_firebase_err: "Firebase ошибка: "
+    loading:"Загрузка...",subtitle_suffix:" — управление музыкой",obs_btn:"🎬 OBS линк",logout:"Выйти",
+    tab_queue:"🎵 Очередь",tab_playlists:"📂 Плейлисты",tab_twitch:"🟣 Twitch",tab_settings:"⚙️ Вид панели",
+    s_playback:"воспроизведение",b_play:"Включить",b_pause:"Пауза",b_skip:"Пропустить",b_replay:"Сначала",b_clear:"Очистить всё",
+    s_queue_title:"очередь треков",empty_queue:"очередь пуста",playing_now:"играет",from_user:"от",confirm_clear:"Очистить всю очередь?",
+    s_my_playlists:"📂 мои плейлисты",lbl_fallback:"Если очередь пуста:",mode_off:"Ничего",mode_order:"По порядку",mode_shuffle:"Рандом 🔀",
+    pl_placeholder:"Ссылка на YouTube плейлист...",pl_add:"+ Добавить",empty_playlists:"плейлистов нет",pl_tracks:"треков",
+    pl_active:"активен",pl_play:"▶ Играть",confirm_del_pl:"Удалить плейлист?",pl_status_key_error:"❌ Сначала вставь YouTube API ключ в код!",
+    pl_status_url_error:"❌ Неверная ссылка. Вставьте ссылку на YouTube плейлист.",pl_status_loading_info:"⏳ Загружаю информацию...",
+    pl_status_loading_tracks:"⏳ Загружаю треки...",pl_status_empty_error:"❌ Плейлист пуст или приватный.",pl_status_success:'добавлен',
+    pl_status_started:'Начал играть',s_viewer_playlists:"🟣 плейлисты от зрителей (channel points)",
+    lbl_viewer_desc:"Зритель кидает ссылку на YouTube плейлист — все треки автоматически добавляются в очередь.<br>Название награды для плейлистов:",
+    lbl_reward_pl_name:"название награды для плейлиста (на Twitch)",reward_pl_placeholder:"📂 Закажи плейлист",
+    lbl_reward_hint:"⚠️ Должно совпадать с названием награды в Twitch Channel Points",lbl_max_tracks:"Макс. треков из одного плейлиста зрителя:",
+    s_twitch_points:"🟣 twitch channel points",tw_disconnected:"не подключено",tw_connecting:"подключение...",tw_connected:"подключено",
+    tw_connect_btn:"Подключить Twitch",tw_disconnect_btn:"Отключить",tw_info_disconnected:"Подключи Twitch чтобы получать треки через Channel Points.",
+    tw_info_connected:"Подключено как {user}. Слушаю Channel Points...",lbl_reward_track_name:"название награды для трека (точное, как на Twitch)",
+    reward_track_placeholder:"🎵 Закажи трек",s_panel_theme:"тема панели",l_c_bg:"Фон страницы",l_c_bg2:"Фон блоков",
+    l_c_accent:"Акцент",l_c_border:"Рамки",l_c_text:"Текст",l_c_text2:"Текст второстепенный",b_save:"💾 Сохранить",b_reset:"↺ Сбросить",
+    saved_ok:"✓ Сохранено!",applied_ok:"✓ Применено!",s_obs_theme:"🎬 вид виджета в obs",l_w_bg:"Фон виджета",
+    l_w_border:"Цвет рамки",l_w_title:"Название трека",l_w_from:'Цвет "от ..."',l_w_label:'Цвет "играет"',
+    l_w_pill:"Очередь (пилюли)",l_w_fontsize:"Размер текста (px)",l_w_scroll:"Скорость прокрутки (сек)",b_save_obs:"🎬 Применить в OBS",
+    m_obs_title:"🎬 Ссылка для OBS",m_obs_desc:"Добавь как Browser Source в OBS. Размер: 480×120px",m_obs_copy:"📋 Копировать",
+    m_obs_copied:"✓ Скопировано!",m_obs_close:"Закрыть",log_auth_ok:"✓ Авторизован как ",log_ws_open:"WebSocket открыт",
+    log_ws_err:"WS ошибка",log_ws_close:"WS закрыт, повтор через 10с...",log_sub_old:"Удалено {num} старых подписок",
+    log_sub_ok:"✓ Подписка активна!",log_skip_reward:"Пропускаю (не та награда)",log_not_url:"❌ Не YouTube ссылка от ",
+    log_not_pl:"❌ Не плейлист от ",log_firebase_err:"Firebase ошибка: "
   },
   en: {
-    loading: "Loading...", subtitle_suffix: " — music control", obs_btn: "🎬 OBS Link", logout: "Logout",
-    tab_queue: "🎵 Queue", tab_playlists: "📂 Playlists", tab_twitch: "🟣 Twitch", tab_settings: "⚙️ Settings",
-    s_playback: "playback control", ps_playing: "Playing", ps_paused: "Paused", ps_stopped: "Stopped", b_play: "Play", b_pause: "Pause", b_skip: "Skip", b_replay: "Replay", b_clear: "Clear All",
-    s_queue_title: "tracks queue", empty_queue: "queue is empty", playing_now: "playing", from_user: "by", confirm_clear: "Clear the entire queue?",
-    s_my_playlists: "📂 my playlists", lbl_fallback: "When queue is empty:", mode_off: "Nothing", mode_order: "In Order", mode_shuffle: "Shuffle 🔀",
-    pl_placeholder: "YouTube playlist link...", pl_add: "+ Add", empty_playlists: "no playlists", pl_tracks: "tracks",
-    pl_active: "active", pl_play: "▶ Play", confirm_del_pl: "Delete this playlist?", pl_status_key_error: "❌ Enter your YouTube API key in the code first!",
-    pl_status_url_error: "❌ Invalid link. Please insert a YouTube playlist URL.", pl_status_loading_info: "⏳ Loading playlist info...",
-    pl_status_loading_tracks: "⏳ Loading tracks...", pl_status_empty_error: "❌ Playlist is empty or private.", pl_status_success: 'added',
-    pl_status_started: 'Started playing', s_viewer_playlists: "🟣 viewer playlists (channel points)",
-    lbl_viewer_desc: "Viewers submit a YouTube playlist link — all tracks are auto-added to the queue.<br>Playlist reward name:",
-    lbl_reward_pl_name: "playlist reward name (on Twitch)", reward_pl_placeholder: "📂 Request Playlist",
-    lbl_reward_hint: "⚠️ Must match the exact reward name in Twitch Channel Points", lbl_max_tracks: "Max tracks from a single viewer playlist:",
-    s_twitch_points: "🟣 twitch channel points", tw_disconnected: "disconnected", tw_connecting: "connecting...", tw_connected: "connected",
-    tw_connect_btn: "Connect Twitch", tw_disconnect_btn: "Disconnect", tw_info_disconnected: "Connect Twitch to receive requests via Channel Points.",
-    tw_info_connected: "Connected as {user}. Listening to Channel Points...", lbl_reward_track_name: "track reward name (exact as on Twitch)",
-    reward_track_placeholder: "🎵 Request Track", s_panel_theme: "panel theme", l_c_bg: "Background color", l_c_bg2: "Block color",
-    l_c_accent: "Accent color", l_c_border: "Borders color", l_c_text: "Text color", l_c_text2: "Secondary text color", b_save: "💾 Save", b_reset: "↺ Reset",
-    saved_ok: "✓ Saved!", applied_ok: "✓ Applied!", s_obs_theme: "🎬 obs widget appearance", l_w_bg: "Widget background",
-    l_w_border: "Border color", l_w_title: "Track title color", l_w_from: '"Requested by" color', l_w_label: '"Playing" tag color',
-    l_w_pill: "Queue badge color", l_w_fontsize: "Font size (px)", l_w_scroll: "Scroll duration (sec)", b_save_obs: "🎬 Apply to OBS",
-    m_obs_title: "🎬 Link for OBS", m_obs_desc: "Add as a Browser Source in OBS. Dimensions: 480×120px", m_obs_copy: "📋 Copy Link",
-    m_obs_copied: "✓ Copied!", m_obs_close: "Close", log_auth_ok: "✓ Authorized as ", log_ws_open: "WebSocket opened",
-    log_ws_err: "WS error", log_ws_close: "WS closed, retrying in 10s...", log_sub_old: "Removed {num} old subscription(s)",
-    log_sub_ok: "✓ Subscription active!", log_skip_reward: "Skipping (wrong reward name)", log_not_url: "❌ Not a YouTube link from ",
-    log_not_pl: "❌ Not a playlist link from ", log_firebase_err: "Firebase error: "
+    loading:"Loading...",subtitle_suffix:" — music control",obs_btn:"🎬 OBS Link",logout:"Logout",
+    tab_queue:"🎵 Queue",tab_playlists:"📂 Playlists",tab_twitch:"🟣 Twitch",tab_settings:"⚙️ Settings",
+    s_playback:"playback control",b_play:"Play",b_pause:"Pause",b_skip:"Skip",b_replay:"Replay",b_clear:"Clear All",
+    s_queue_title:"tracks queue",empty_queue:"queue is empty",playing_now:"playing",from_user:"by",confirm_clear:"Clear the entire queue?",
+    s_my_playlists:"📂 my playlists",lbl_fallback:"When queue is empty:",mode_off:"Nothing",mode_order:"In Order",mode_shuffle:"Shuffle 🔀",
+    pl_placeholder:"YouTube playlist link...",pl_add:"+ Add",empty_playlists:"no playlists",pl_tracks:"tracks",
+    pl_active:"active",pl_play:"▶ Play",confirm_del_pl:"Delete this playlist?",pl_status_key_error:"❌ Enter your YouTube API key in the code first!",
+    pl_status_url_error:"❌ Invalid link. Please insert a YouTube playlist URL.",pl_status_loading_info:"⏳ Loading playlist info...",
+    pl_status_loading_tracks:"⏳ Loading tracks...",pl_status_empty_error:"❌ Playlist is empty or private.",pl_status_success:'added',
+    pl_status_started:'Started playing',s_viewer_playlists:"🟣 viewer playlists (channel points)",
+    lbl_viewer_desc:"Viewers submit a YouTube playlist link — all tracks are auto-added to the queue.<br>Playlist reward name:",
+    lbl_reward_pl_name:"playlist reward name (on Twitch)",reward_pl_placeholder:"📂 Request Playlist",
+    lbl_reward_hint:"⚠️ Must match the exact reward name in Twitch Channel Points",lbl_max_tracks:"Max tracks from a single viewer playlist:",
+    s_twitch_points:"🟣 twitch channel points",tw_disconnected:"disconnected",tw_connecting:"connecting...",tw_connected:"connected",
+    tw_connect_btn:"Connect Twitch",tw_disconnect_btn:"Disconnect",tw_info_disconnected:"Connect Twitch to receive requests via Channel Points.",
+    tw_info_connected:"Connected as {user}. Listening to Channel Points...",lbl_reward_track_name:"track reward name (exact as on Twitch)",
+    reward_track_placeholder:"🎵 Request Track",s_panel_theme:"panel theme",l_c_bg:"Background color",l_c_bg2:"Block color",
+    l_c_accent:"Accent color",l_c_border:"Borders color",l_c_text:"Text color",l_c_text2:"Secondary text color",b_save:"💾 Save",b_reset:"↺ Reset",
+    saved_ok:"✓ Saved!",applied_ok:"✓ Applied!",s_obs_theme:"🎬 obs widget appearance",l_w_bg:"Widget background",
+    l_w_border:"Border color",l_w_title:"Track title color",l_w_from:'"Requested by" color',l_w_label:'"Playing" tag color',
+    l_w_pill:"Queue badge color",l_w_fontsize:"Font size (px)",l_w_scroll:"Scroll duration (sec)",b_save_obs:"🎬 Apply to OBS",
+    m_obs_title:"🎬 Link for OBS",m_obs_desc:"Add as a Browser Source in OBS. Dimensions: 480×120px",m_obs_copy:"📋 Copy Link",
+    m_obs_copied:"✓ Copied!",m_obs_close:"Close",log_auth_ok:"✓ Authorized as ",log_ws_open:"WebSocket opened",
+    log_ws_err:"WS error",log_ws_close:"WS closed, retrying in 10s...",log_sub_old:"Removed {num} old subscription(s)",
+    log_sub_ok:"✓ Subscription active!",log_skip_reward:"Skipping (wrong reward name)",log_not_url:"❌ Not a YouTube link from ",
+    log_not_pl:"❌ Not a playlist link from ",log_firebase_err:"Firebase error: "
   }
 };
 
@@ -452,8 +410,6 @@ window.changeLanguage = function(lang) {
   applyLocalization();
   render();
   renderMyPlaylists();
-  // Save lang to Firebase so OBS widget can sync
-  if (uid) { set(langRef(), lang).catch(()=>{}); }
 };
 
 function applyLocalization() {
@@ -473,7 +429,6 @@ function applyLocalization() {
   document.getElementById('b-skip').textContent = t.b_skip;
   document.getElementById('b-replay').textContent = t.b_replay;
   document.getElementById('b-clear').textContent = t.b_clear;
-  document.getElementById('s-queue-title').textContent = t.s_queue_title;
   document.getElementById('s-my-playlists').textContent = t.s_my_playlists;
   document.getElementById('lbl-fallback').textContent = t.lbl_fallback;
   document.getElementById('mode-off').textContent = t.mode_off;
@@ -517,40 +472,54 @@ function applyLocalization() {
   updateTwitchUIState();
 }
 
-function qRef()   { return ref(db, `users/${uid}/queue`); }
-function ctlRef() { return ref(db, `users/${uid}/control`); }
-function wtRef()  { return ref(db, `users/${uid}/widget_theme`); }
-function plRef()  { return ref(db, `users/${uid}/playlists`); }
-function plCfgRef() { return ref(db, `users/${uid}/playlist_config`); }
-function rewardCfgRef() { return ref(db, `users/${uid}/reward_config`); }
-function langRef()      { return ref(db, `users/${uid}/lang`); }
-function pbRef()       { return ref(db, `users/${uid}/playback_state`); }
+function qRef()       { return ref(db, `users/${uid}/queue`); }
+function ctlRef()     { return ref(db, `users/${uid}/control`); }
+function wtRef()      { return ref(db, `users/${uid}/widget_theme`); }
+function plRef()      { return ref(db, `users/${uid}/playlists`); }
+function plCfgRef()   { return ref(db, `users/${uid}/playlist_config`); }
+function rewardCfgRef(){ return ref(db, `users/${uid}/reward_config`); }
 
+// ── FIX: onAuthStateChanged — тільки Google, без Twitch як метод входу ──
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-   { window.location.href = './index.html'; }
+    // Якщо не залогінений — на головну
+    window.location.href = './index.html';
     return;
   }
+
   uid = user.uid;
+
+  // ── FIX: Читаємо Twitch токен з URL якщо є (після редіректу з Twitch OAuth) ──
+  const _hash = window.location.hash;
+  if (_hash.includes('access_token')) {
+    const _token = new URLSearchParams(_hash.replace(/^#/, '')).get('access_token');
+    if (_token) {
+      history.replaceState(null, '', window.location.pathname);
+      localStorage.setItem('twitch_panel_token', _token);
+      setTimeout(() => initTwitchEventSub(_token), 800);
+    }
+  }
+
+  // Отримуємо ім'я користувача
   const twitchTok = localStorage.getItem('twitch_panel_token');
   if (twitchTok) {
     try {
       const r = await fetch('https://api.twitch.tv/helix/users', {
         headers: {'Authorization':`Bearer ${twitchTok}`,'Client-Id':TWITCH_CLIENT_ID}
       });
-      if (r.ok) { const d = await r.json(); userDisplayName = d.data[0]?.display_name || 'Стример'; }
+      if (r.ok) { const d = await r.json(); userDisplayName = d.data[0]?.display_name || ''; }
     } catch {}
-  } else {
+  }
+  if (!userDisplayName) {
     userDisplayName = user.displayName || user.email || 'Стример';
   }
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+
   applyLocalization();
   document.getElementById('user-subtitle').textContent = userDisplayName + LANGUAGES[currentLang].subtitle_suffix;
-  // Sync current lang to Firebase for OBS widget
-  set(langRef(), currentLang).catch(()=>{});
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
   initQueue();
-  initPlaybackState();
   loadColors();
   loadWidgetTheme();
   initPlaylists();
@@ -580,7 +549,7 @@ window.copyObsUrl = function() {
   setTimeout(()=>btn.textContent=LANGUAGES[currentLang].m_obs_copy,1500);
 };
 
-// ── REWARDS SYNC (FIREBASE) ──────────────────────────────────────
+// ── REWARDS ──
 function initRewards() {
   onValue(rewardCfgRef(), (snap) => {
     const cfg = snap.val() || {};
@@ -589,7 +558,6 @@ function initRewards() {
     if (cfg.maxPlTracks !== undefined) document.getElementById('max-pl-tracks').value = cfg.maxPlTracks;
   });
 }
-
 window.saveRewards = async function() {
   if (!uid) return;
   const trackReward = document.getElementById('reward-name-input').value.trim();
@@ -598,12 +566,11 @@ window.saveRewards = async function() {
   await set(rewardCfgRef(), { trackReward, playlistReward, maxPlTracks });
 };
 
-// ── YOUTUBE PLAYLIST FETCH ────────────────────────────────────────
+// ── YOUTUBE ──
 function extractPlaylistId(text) {
   const m = text.match(/[?&]list=([A-Za-z0-9_-]+)/);
   return m ? m[1] : null;
 }
-
 async function fetchPlaylistInfo(plId) {
   const r = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${plId}&key=${YOUTUBE_API_KEY}`);
   if (!r.ok) throw new Error('YouTube API error');
@@ -612,7 +579,6 @@ async function fetchPlaylistInfo(plId) {
   const pl = d.items[0].snippet;
   return { title: pl.title, thumb: pl.thumbnails?.medium?.url || pl.thumbnails?.default?.url || '' };
 }
-
 async function fetchPlaylistTracks(plId, maxResults = 50) {
   const tracks = [];
   let pageToken = '';
@@ -634,7 +600,7 @@ async function fetchPlaylistTracks(plId, maxResults = 50) {
   return tracks;
 }
 
-// ── MY PLAYLISTS ──────────────────────────────────────────────────
+// ── MY PLAYLISTS ──
 function initPlaylists() {
   onValue(plCfgRef(), (snap) => {
     const cfg = snap.val() || {};
@@ -649,24 +615,19 @@ function initPlaylists() {
     renderMyPlaylists();
   });
 }
-
 function updateModeButtons() {
   ['off','order','shuffle'].forEach(m => {
     document.getElementById('mode-'+m)?.classList.toggle('active', fallbackMode === m);
   });
 }
-
 window.setFallbackMode = async function(mode) {
   fallbackMode = mode;
   updateModeButtons();
   await update(plCfgRef(), { mode });
 };
-
 window.addMyPlaylist = async function() {
   const t = LANGUAGES[currentLang];
-  if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY') {
-    setPlStatus(t.pl_status_key_error, true); return;
-  }
+  if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY') { setPlStatus(t.pl_status_key_error, true); return; }
   const url = document.getElementById('my-pl-url').value.trim();
   const plId = extractPlaylistId(url);
   if (!plId) { setPlStatus(t.pl_status_url_error, true); return; }
@@ -686,13 +647,11 @@ window.addMyPlaylist = async function() {
   }
   btn.disabled = false;
 };
-
 function setPlStatus(msg, isErr=false) {
   const el = document.getElementById('my-pl-status');
   el.textContent = msg;
   el.style.color = isErr ? '#e08080' : 'var(--green)';
 }
-
 function renderMyPlaylists() {
   const t = LANGUAGES[currentLang];
   const el = document.getElementById('my-playlists-list');
@@ -710,7 +669,6 @@ function renderMyPlaylists() {
       </div>
     </div>`).join('');
 }
-
 window.playMyPlaylist = async function(key) {
   const pl = myPlaylists.find(p => p.key === key);
   if (!pl) return;
@@ -721,7 +679,6 @@ window.playMyPlaylist = async function(key) {
   renderMyPlaylists();
   setPlStatus(`▶ ${LANGUAGES[currentLang].pl_status_started} "${pl.title}"`);
 };
-
 window.deleteMyPlaylist = async function(key) {
   if (!confirm(LANGUAGES[currentLang].confirm_del_pl)) return;
   await remove(ref(db, `users/${uid}/playlists/${key}`));
@@ -730,7 +687,6 @@ window.deleteMyPlaylist = async function(key) {
     await update(plCfgRef(), { activeId: null });
   }
 };
-
 async function pushNextFromPlaylist(pl, index) {
   const tracks = pl.tracks || [];
   if (!tracks.length) return;
@@ -746,7 +702,7 @@ async function pushNextFromPlaylist(pl, index) {
   await update(plCfgRef(), { index: idx + 1 });
 }
 
-// ── TWITCH EVENTSUB ───────────────────────────────────────────────
+// ── TWITCH EVENTSUB ──
 function log(msg,type='info'){
   const box=document.getElementById('twitch-log');
   if(!box) return;
@@ -757,17 +713,18 @@ function log(msg,type='info'){
   box.scrollTop=box.scrollHeight;
 }
 
+// ── FIX: twitchConnect — тільки для Channel Points, НЕ для входу ──
 window.twitchConnect = function() {
   if (twitchToken) { twitchDisconnect(); return; }
-  const saved = localStorage.getItem('twitch_panel_token') || localStorage.getItem('twitch_token');
+  const saved = localStorage.getItem('twitch_panel_token');
   if (saved) { initTwitchEventSub(saved); return; }
-  localStorage.setItem('twitch_login_pending','1');
+  // Редірект на Twitch OAuth — повернеться на panel.html з токеном в URL
   const REDIRECT = window.location.origin + window.location.pathname;
   window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=token&scope=channel:read:redemptions+user:read:email`;
 };
 
 function twitchDisconnect(){
-  twitchToken=null;twitchUserId=null;twitchUserLogin=null;
+  twitchToken=null; twitchUserId=null; twitchUserLogin=null;
   localStorage.removeItem('twitch_panel_token');
   if(eventSubWs){eventSubWs.close();eventSubWs=null;}
   updateTwitchUIState();
@@ -860,8 +817,8 @@ async function handleRedemption(ev){
     try {
       const tracks = await fetchPlaylistTracks(plId, maxTracks);
       if (!tracks.length) { return; }
-      for (const t of tracks) {
-        await push(qRef(), { id: t.id, title: t.title, channel: t.channel || '', from: userName, ts: Date.now(), status:'approved', source:'twitch_playlist' });
+      for (const tr of tracks) {
+        await push(qRef(), { id: tr.id, title: tr.title, channel: tr.channel || '', from: userName, ts: Date.now(), status:'approved', source:'twitch_playlist' });
       }
     } catch(e) { log('❌ Playlist error: ' + e.message, 'err'); }
     return;
@@ -883,7 +840,6 @@ function extractVideoId(text){const m=text.match(/(?:v=|youtu\.be\/|embed\/)([A-
 
 let globalTwitchState = 'disconnected';
 function setTwitchStatusState(state) { globalTwitchState = state; updateTwitchUIState(); }
-
 function updateTwitchUIState(){
   const t = LANGUAGES[currentLang];
   const dot=document.getElementById('twitch-dot');
@@ -891,54 +847,27 @@ function updateTwitchUIState(){
   const btn=document.getElementById('twitch-btn');
   const info=document.getElementById('twitch-info');
   const setup=document.getElementById('reward-setup');
-  if(!dot || !label || !btn || !info) return;
+  if(!dot||!label||!btn||!info) return;
   dot.className='twitch-dot '+(globalTwitchState==='connected'?'connected':globalTwitchState==='connecting'?'connecting':'');
   if(globalTwitchState==='connected'){
     label.textContent=`${t.tw_connected} (${twitchUserLogin||''})`;
-    label.className='twitch-label connected'; btn.textContent=t.tw_disconnect_btn; btn.className='twitch-btn disconnect'; btn.disabled=false;
-    info.textContent=t.tw_info_connected.replace('{user}', twitchUserLogin||''); if(setup) setup.style.display='block';
+    label.className='twitch-label connected';btn.textContent=t.tw_disconnect_btn;btn.className='twitch-btn disconnect';btn.disabled=false;
+    info.textContent=t.tw_info_connected.replace('{user}',twitchUserLogin||'');if(setup) setup.style.display='block';
   } else if(globalTwitchState==='connecting'){
-    label.textContent=t.tw_connecting; label.className='twitch-label connecting'; btn.textContent='...'; btn.className='twitch-btn'; btn.disabled=true;
+    label.textContent=t.tw_connecting;label.className='twitch-label connecting';btn.textContent='...';btn.className='twitch-btn';btn.disabled=true;
   } else {
-    label.textContent=t.tw_disconnected; label.className='twitch-label'; btn.textContent=t.tw_connect_btn; btn.className='twitch-btn'; btn.disabled=false;
-    info.textContent=t.tw_info_disconnected; if(setup) setup.style.display='none';
+    label.textContent=t.tw_disconnected;label.className='twitch-label';btn.textContent=t.tw_connect_btn;btn.className='twitch-btn';btn.disabled=false;
+    info.textContent=t.tw_info_disconnected;if(setup) setup.style.display='none';
   }
 }
 
+// Автопідключення Twitch якщо токен збережений
 setTimeout(()=>{
-  const t=localStorage.getItem('twitch_panel_token')||localStorage.getItem('twitch_token');
-  if(t&&uid) initTwitchEventSub(t);
-  else if(t) { const unsub=onAuthStateChanged(auth,u=>{if(u){unsub();initTwitchEventSub(t);}}); }
-},500);
+  const t=localStorage.getItem('twitch_panel_token');
+  if(t && uid) initTwitchEventSub(t);
+},1000);
 
-// ── QUEUE ─────────────────────────────────────────────────────────
-function initPlaybackState(){
-  onValue(pbRef(),(snap)=>{
-    const data = snap.val();
-    const state = data?.state || 'stopped';
-    const dot   = document.getElementById('ps-dot');
-    const label = document.getElementById('ps-label');
-    const track = document.getElementById('ps-track');
-    if (!dot) return;
-    const t = LANGUAGES[currentLang];
-    dot.className   = 'ps-dot ' + state;
-    label.className = 'ps-label ' + state;
-    if (state === 'playing') {
-      label.textContent = '▶ ' + (t.ps_playing || 'Playing');
-      // Find currently playing track name
-      const playing = allItems.find(i=>i.status==='playing');
-      if (track) track.textContent = playing ? playing.title : '';
-    } else if (state === 'paused') {
-      label.textContent = '⏸ ' + (t.ps_paused || 'Paused');
-      const playing = allItems.find(i=>i.status==='playing');
-      if (track) track.textContent = playing ? playing.title : '';
-    } else {
-      label.textContent = '⏹ ' + (t.ps_stopped || 'Stopped');
-      if (track) track.textContent = '';
-    }
-  });
-}
-
+// ── QUEUE ──
 function initQueue(){
   onValue(qRef(),(snapshot)=>{
     const data=snapshot.val();
@@ -946,10 +875,8 @@ function initQueue(){
     allItems=Object.entries(data).map(([k,v])=>({...v,key:k})).sort((a,b)=>a.ts-b.ts);
     render();
     checkFallback(allItems);
-    syncPlaybackStateFromQueue();
   });
 }
-
 async function checkFallback(items) {
   if (!uid) return;
   const active = items.filter(t => t.status === 'approved' || t.status === 'playing');
@@ -962,7 +889,6 @@ async function checkFallback(items) {
     }
   }
 }
-
 function render(){
   const t = LANGUAGES[currentLang];
   const approved=allItems.filter(t=>t.status==='approved'||t.status==='playing');
@@ -980,28 +906,12 @@ function render(){
       <button class="btn-del" onclick="reject('${item.key}')">✗</button>
     </div>`).join('');
 }
-
-// Auto-sync playback_state when queue changes
-function syncPlaybackStateFromQueue() {
-  const playing = allItems.find(i => i.status === 'playing');
-  if (playing) {
-    // Only set to playing if not already paused by user
-    get(pbRef()).then(snap => {
-      const cur = snap.val()?.state;
-      if (cur !== 'paused') set(pbRef(), {state:'playing', ts:Date.now()}).catch(()=>{});
-    });
-  } else if (allItems.filter(i=>i.status==='approved').length === 0) {
-    set(pbRef(), {state:'stopped', ts:Date.now()}).catch(()=>{});
-  }
-}
-
 window.reject=k=>remove(ref(db,`users/${uid}/queue/${k}`));
 window.clearAll=()=>{if(!confirm(LANGUAGES[currentLang].confirm_clear))return;allItems.forEach(t=>remove(ref(db,`users/${uid}/queue/${t.key}`)));};
-window.stopCurrentTrack=()=>{set(ctlRef(),{action:'pause',ts:Date.now()});set(pbRef(),{state:'paused',ts:Date.now()});};
-window.resumeCurrentTrack=()=>{set(ctlRef(),{action:'play',ts:Date.now()});set(pbRef(),{state:'playing',ts:Date.now()});};
-window.skipCurrent=()=>{set(ctlRef(),{action:'skip',ts:Date.now()});};
-window.replayCurrentTrack=()=>{set(ctlRef(),{action:'replay',ts:Date.now()});set(pbRef(),{state:'playing',ts:Date.now()});};
-
+window.stopCurrentTrack=()=>set(ctlRef(),{action:'pause',ts:Date.now()});
+window.resumeCurrentTrack=()=>set(ctlRef(),{action:'play',ts:Date.now()});
+window.skipCurrent=()=>set(ctlRef(),{action:'skip',ts:Date.now()});
+window.replayCurrentTrack=()=>set(ctlRef(),{action:'replay',ts:Date.now()});
 window.switchTab=function(name){
   const names=['queue','playlists','twitch','settings'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
@@ -1009,7 +919,7 @@ window.switchTab=function(name){
   document.getElementById('tab-'+name).classList.add('active');
 };
 
-// ── PANEL THEMES & ADAPTIVITY ─────────────────────────────────────
+// ── COLORS / THEMES ──
 const PRESETS={
   dark:{'--bg':'#0a0a0a','--bg2':'#161616','--accent':'#ffffff','--border':'#2a2a2a','--text':'#e0e0e0','--text2':'#888888'},
   red:{'--bg':'#1a0000','--bg2':'#240808','--accent':'#ff4444','--border':'#3d1010','--text':'#e0a0a0','--text2':'#7a3535'},
@@ -1018,7 +928,6 @@ const PRESETS={
   green:{'--bg':'#001a0a','--bg2':'#082414','--accent':'#44ff88','--border':'#1a4a28','--text':'#a0e0b8','--text2':'#357a50'},
   orange:{'--bg':'#1a0800','--bg2':'#240f08','--accent':'#ff8c44','--border':'#5a2a10','--text':'#f0c8a0','--text2':'#8a5a35'},
 };
-
 const COLOR_FIELDS=[
   {css:'--bg',id:'c-bg',hid:'h-bg'},
   {css:'--bg2',id:'c-bg2',hid:'h-bg2'},
@@ -1027,126 +936,113 @@ const COLOR_FIELDS=[
   {css:'--text',id:'c-text',hid:'h-text'},
   {css:'--text2',id:'c-text2',hid:'h-text2'}
 ];
-
-function hexToRgb(hex) {
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
-}
-
-function adjustColor(hex, percent) {
-  const rgb = hexToRgb(hex);
-  if(!rgb) return hex;
-  const r = Math.max(0, Math.min(255, rgb.r + percent));
-  const g = Math.max(0, Math.min(255, rgb.g + percent));
-  const b = Math.max(0, Math.min(255, rgb.b + percent));
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-// Вычисление сложных переменных на основе основных параметров
-function computeDerivedVariables() {
-  const root = document.documentElement;
-  const bg2 = document.getElementById('c-bg2').value;
-  const border = document.getElementById('c-border').value;
-  const accent = document.getElementById('c-accent').value;
-  const text = document.getElementById('c-text').value;
-
-  // Автоматическая генерация производных цветов
-  root.style.setProperty('--bg3', adjustColor(bg2, 12));
-  root.style.setProperty('--border2', adjustColor(border, 15));
-  root.style.setProperty('--accent2', adjustColor(accent, -40));
-  root.style.setProperty('--text3', adjustColor(text, 15));
-}
-
-function applyVars(v){
-  Object.entries(v).forEach(([k,val])=>document.documentElement.style.setProperty(k,val));
-}
-
-function syncPickersFromVars(vars){
+window.liveColor=(v,c)=>document.documentElement.style.setProperty(v,c);
+window.syncHex=function(inp){
+  const field=COLOR_FIELDS.find(f=>f.id===inp.id);
+  if(field) document.getElementById(field.hid).value=inp.value;
+};
+window.hexInput=function(css,colorId,inp){
+  const v=inp.value.trim();
+  if(/^#[0-9a-fA-F]{6}$/.test(v)){document.documentElement.style.setProperty(css,v);document.getElementById(colorId).value=v;}
+};
+window.applyPreset=function(name){
+  const p=PRESETS[name];if(!p)return;
   COLOR_FIELDS.forEach(f=>{
-    if(vars[f.css]){
-      const el=document.getElementById(f.id); const hel=document.getElementById(f.hid);
-      if(el)el.value=vars[f.css]; if(hel)hel.value=vars[f.css];
+    if(p[f.css]){
+      document.getElementById(f.id).value=p[f.css];
+      document.getElementById(f.hid).value=p[f.css];
+      document.documentElement.style.setProperty(f.css,p[f.css]);
     }
   });
-  computeDerivedVariables();
-}
-
-window.applyPreset=function(name){
-  document.querySelectorAll('.preset-btn:not([id^="wp-"])').forEach(b=>b.classList.remove('active'));
-  document.getElementById('preset-'+name)?.classList.add('active');
-  applyVars(PRESETS[name]);
-  syncPickersFromVars(PRESETS[name]);
 };
-
-window.liveColor=function(cssVar,val){
-  document.documentElement.style.setProperty(cssVar,val);
-  computeDerivedVariables();
-};
-
-window.syncHex=function(colorInput){
-  const hexEl=document.getElementById('h-'+colorInput.id.slice(2));
-  if(hexEl) hexEl.value=colorInput.value;
-};
-
-window.hexInput=function(cssVar,colorId,hexInput){
-  const val=hexInput.value.trim();
-  if(/^#[0-9a-fA-F]{6}$/.test(val)){
-    document.getElementById(colorId).value=val;
-    liveColor(cssVar,val);
-  }
-};
-
-window.saveColors=function(){
-  const saved={};
-  COLOR_FIELDS.forEach(f=>{ const v=document.getElementById(f.id)?.value; if(v) saved[f.css]=v; });
-  localStorage.setItem('dj_colors_'+uid,JSON.stringify(saved));
+window.saveColors=async function(){
+  if(!uid)return;
+  const colors={};
+  COLOR_FIELDS.forEach(f=>{colors[f.css]=document.getElementById(f.id).value;});
+  await set(ref(db,`users/${uid}/panel_theme`),colors);
   const btn=document.getElementById('b-save-theme');
-  btn.textContent=LANGUAGES[currentLang].saved_ok; setTimeout(()=>btn.textContent=LANGUAGES[currentLang].b_save,1500);
+  btn.textContent=LANGUAGES[currentLang].saved_ok;
+  setTimeout(()=>btn.textContent=LANGUAGES[currentLang].b_save,1500);
 };
-
-window.resetColors=function(){
-  localStorage.removeItem('dj_colors_'+uid);
-  applyPreset('dark');
-};
-
+window.resetColors=function(){applyPreset('dark');};
 function loadColors(){
-  const saved=localStorage.getItem('dj_colors_'+uid);
-  if(saved){
-    try{
-      const vars=JSON.parse(saved); applyVars(vars); syncPickersFromVars(vars);
-    }catch{ applyPreset('dark'); }
-  } else {
-    applyPreset('dark'); // Новые пользователи регистрируются с черной темой
-  }
+  onValue(ref(db,`users/${uid}/panel_theme`),(snap)=>{
+    const colors=snap.val();
+    if(!colors)return;
+    COLOR_FIELDS.forEach(f=>{
+      if(colors[f.css]){
+        document.getElementById(f.id).value=colors[f.css];
+        document.getElementById(f.hid).value=colors[f.css];
+        document.documentElement.style.setProperty(f.css,colors[f.css]);
+      }
+    });
+  });
 }
 
-// ── WIDGET THEME ──────────────────────────────────────────────────
+// ── WIDGET THEME ──
 const WIDGET_PRESETS={
-  dark:{bg:'#0a0a0a',border:'#444444',title:'#ffffff',from:'#888888',label:'#cccccc',pill:'#aaaaaa',fontsize:13,scroll:12},
-  red:{bg:'#140000',border:'#c0392b',title:'#ffffff',from:'#7a3535',label:'#ff6060',pill:'#c08080',fontsize:13,scroll:12},
-  blue:{bg:'#000a1a',border:'#2a6bbf',title:'#c0deff',from:'#3a6090',label:'#4da6ff',pill:'#6090c0',fontsize:13,scroll:12},
-  purple:{bg:'#0d001a',border:'#7b2fbe',title:'#e8c8ff',from:'#6a3590',label:'#bf7fff',pill:'#9060c0',fontsize:13,scroll:12},
-  green:{bg:'#001a0a',border:'#27ae60',title:'#c0f0d0',from:'#357a50',label:'#44ff88',pill:'#60c080',fontsize:13,scroll:12},
-  orange:{bg:'#1a0800',border:'#c05a20',title:'#ffe0c0',from:'#8a5a35',label:'#ff8c44',pill:'#c08060',fontsize:13,scroll:12},
-  cyber:{bg:'#000d1a',border:'#00c8ff',title:'#00ffee',from:'#007a99',label:'#00c8ff',pill:'#0090b0',fontsize:13,scroll:10},
-  gold:{bg:'#1a1400',border:'#c8a000',title:'#fff0a0',from:'#8a7a35',label:'#ffd700',pill:'#c0a040',fontsize:13,scroll:12},
+  dark:{bg:'#0a0a0a',border:'#444444',title:'#ffffff',from:'#888888',label:'#cccccc',pill:'#aaaaaa'},
+  red:{bg:'#140000',border:'#c0392b',title:'#ffcccc',from:'#aa6666',label:'#ff8888',pill:'#cc4444'},
+  blue:{bg:'#000a1a',border:'#1a3a6b',title:'#a0c8ff',from:'#4a7aaa',label:'#6699cc',pill:'#336699'},
+  purple:{bg:'#0d001a',border:'#4a1a7a',title:'#d0a0ff',from:'#7a5aaa',label:'#aa77dd',pill:'#6633aa'},
+  green:{bg:'#001a0a',border:'#1a5a2a',title:'#a0ffcc',from:'#4aaa77',label:'#66cc88',pill:'#338855'},
+  orange:{bg:'#1a0800',border:'#8b3a00',title:'#ffd0a0',from:'#aa7744',label:'#cc9955',pill:'#995522'},
+  cyber:{bg:'#000d1a',border:'#00c8ff',title:'#00ffff',from:'#0099bb',label:'#00ccee',pill:'#007799'},
+  gold:{bg:'#1a1400',border:'#c8a000',title:'#ffe066',from:'#aa8800',label:'#ccaa00',pill:'#997700'},
 };
-const DEFAULT_WIDGET={bg:'#0a0a0a',border:'#444444',title:'#ffffff',from:'#888888',label:'#cccccc',pill:'#aaaaaa',fontsize:13,scroll:12};
-function applyWidgetPickers(t){Object.entries(t).forEach(([k,v])=>{const el=document.getElementById('w-'+k);const hel=document.getElementById('wh-'+k);if(el)el.value=v;if(hel)hel.value=v;});}
-window.applyWidgetPreset=function(name){document.querySelectorAll('[id^="wp-"]').forEach(b=>b.classList.remove('active'));document.getElementById('wp-'+name)?.classList.add('active');applyWidgetPickers(WIDGET_PRESETS[name]);};
-window.syncHexW=function(colorInput){const hexEl=document.getElementById('wh-'+colorInput.id.slice(2));if(hexEl)hexEl.value=colorInput.value;};
-window.hexInputW=function(colorId,hexInput){const val=hexInput.value.trim();if(/^#[0-9a-fA-F]{6}$/.test(val))document.getElementById(colorId).value=val;};
+window.applyWidgetPreset=function(name){
+  const p=WIDGET_PRESETS[name];if(!p)return;
+  const map={bg:'w-bg',border:'w-border',title:'w-title',from:'w-from',label:'w-label',pill:'w-pill'};
+  Object.entries(map).forEach(([k,id])=>{
+    if(p[k]){
+      document.getElementById(id).value=p[k];
+      const hid='wh-'+id.replace('w-','');
+      const hel=document.getElementById(hid);
+      if(hel) hel.value=p[k];
+    }
+  });
+};
+window.syncHexW=function(inp){
+  const hid='wh-'+inp.id.replace('w-','');
+  const hel=document.getElementById(hid);
+  if(hel) hel.value=inp.value;
+};
+window.hexInputW=function(colorId,inp){
+  const v=inp.value.trim();
+  if(/^#[0-9a-fA-F]{6}$/.test(v)) document.getElementById(colorId).value=v;
+};
 window.saveWidgetTheme=async function(){
-  const theme={bg:document.getElementById('w-bg').value,border:document.getElementById('w-border').value,title:document.getElementById('w-title').value,from:document.getElementById('w-from').value,label:document.getElementById('w-label').value,pill:document.getElementById('w-pill').value,fontsize:parseInt(document.getElementById('w-fontsize').value)||13,scroll:parseInt(document.getElementById('w-scroll').value)||12};
+  if(!uid)return;
+  const theme={
+    bg:document.getElementById('w-bg').value,
+    border:document.getElementById('w-border').value,
+    title:document.getElementById('w-title').value,
+    from:document.getElementById('w-from').value,
+    label:document.getElementById('w-label').value,
+    pill:document.getElementById('w-pill').value,
+    fontSize:parseInt(document.getElementById('w-fontsize').value)||13,
+    scrollDuration:parseInt(document.getElementById('w-scroll').value)||12,
+  };
   await set(wtRef(),theme);
   const btn=document.getElementById('b-save-obs');
-  btn.textContent=LANGUAGES[currentLang].applied_ok;setTimeout(()=>btn.textContent=LANGUAGES[currentLang].b_save_obs,1500);
+  btn.textContent=LANGUAGES[currentLang].applied_ok;
+  setTimeout(()=>btn.textContent=LANGUAGES[currentLang].b_save_obs,1500);
 };
-window.resetWidgetTheme=async function(){await set(wtRef(),DEFAULT_WIDGET);applyWidgetPickers(DEFAULT_WIDGET);};
-function loadWidgetTheme(){onValue(wtRef(),(snap)=>{const t=snap.val();if(t)applyWidgetPickers(t);});}
-
+window.resetWidgetTheme=function(){applyWidgetPreset('dark');};
+function loadWidgetTheme(){
+  onValue(wtRef(),(snap)=>{
+    const t=snap.val();
+    if(!t)return;
+    if(t.bg) document.getElementById('w-bg').value=t.bg;
+    if(t.border) document.getElementById('w-border').value=t.border;
+    if(t.title) document.getElementById('w-title').value=t.title;
+    if(t.from) document.getElementById('w-from').value=t.from;
+    if(t.label) document.getElementById('w-label').value=t.label;
+    if(t.pill) document.getElementById('w-pill').value=t.pill;
+    if(t.fontSize) document.getElementById('w-fontsize').value=t.fontSize;
+    if(t.scrollDuration) document.getElementById('w-scroll').value=t.scrollDuration;
+  });
+}
 </script>
 </body>
 </html>
