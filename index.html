@@ -9,31 +9,26 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0d0d0d;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Inter',sans-serif;padding:24px;}
-@keyframes glow{0%,100%{box-shadow:0 0 20px #6441a544;}50%{box-shadow:0 0 40px #6441a588;}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px #4285F444;}50%{box-shadow:0 0 40px #4285F488;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 .card{background:#161616;border:1px solid #2a2a2a;border-radius:24px;padding:48px 36px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;animation:fadeUp 0.5s ease;}
 .logo{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:6px;text-align:center;}
 .logo span{color:#6441a5;}
 .tagline{font-size:13px;color:#555;margin-bottom:32px;text-align:center;}
-.login-btn{width:100%;border:none;border-radius:14px;padding:16px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Unbounded',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;transition:all 0.2s;letter-spacing:0.01em;}
-.btn-twitch{background:#6441a5;color:#fff;animation:glow 3s ease-in-out infinite;}
-.btn-twitch:hover{background:#7b54c9;transform:translateY(-1px);}
-.btn-google{background:#fff;color:#333;}
-.btn-google:hover{background:#f0f0f0;transform:translateY(-1px);}
+.login-btn{width:100%;border:none;border-radius:14px;padding:16px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Unbounded',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all 0.2s;letter-spacing:0.01em;}
+.btn-google{background:#fff;color:#333;animation:glow 3s ease-in-out infinite;}
+.btn-google:hover{background:#f0f0f0;transform:translateY(-2px);box-shadow:0 8px 24px rgba(66,133,244,0.3);}
 .btn-icon{width:22px;height:22px;flex-shrink:0;}
-.divider{width:100%;display:flex;align-items:center;gap:12px;margin:8px 0 20px;}
-.divider-line{flex:1;height:1px;background:#2a2a2a;}
-.divider-text{font-size:11px;color:#444;}
-.features{margin-top:32px;width:100%;display:flex;flex-direction:column;gap:10px;}
+.features{margin-top:36px;width:100%;display:flex;flex-direction:column;gap:10px;}
 .feature{display:flex;align-items:center;gap:10px;font-size:12px;color:#555;}
 .feature-icon{font-size:16px;}
-.status-msg{font-size:12px;color:#e08080;margin-top:12px;text-align:center;min-height:18px;}
-
-/* Language switcher */
+.status-msg{font-size:12px;color:#e08080;margin-top:16px;text-align:center;min-height:18px;}
 .lang-switcher{display:flex;gap:6px;margin-bottom:28px;}
 .lang-btn{background:transparent;border:1px solid #2a2a2a;border-radius:8px;padding:5px 12px;font-size:11px;color:#555;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
 .lang-btn:hover{border-color:#6441a5;color:#aaa;}
 .lang-btn.active{background:#6441a5;border-color:#6441a5;color:#fff;}
+.hint{font-size:11px;color:#333;margin-top:20px;text-align:center;line-height:1.6;}
+.hint span{color:#6441a5;}
 </style>
 </head>
 <body>
@@ -41,32 +36,30 @@ body{background:#0d0d0d;min-height:100vh;display:flex;flex-direction:column;alig
   <div class="logo">Stream<span>DJ</span></div>
   <div class="tagline" id="tagline">Музика на стрімі через Twitch Channel Points</div>
 
-  <!-- Language Switcher -->
   <div class="lang-switcher">
     <button class="lang-btn active" onclick="setLang('uk')">🇺🇦 UA</button>
     <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
     <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
   </div>
 
-  <button class="login-btn btn-twitch" onclick="loginTwitch()">
-    <svg class="btn-icon" viewBox="0 0 24 24" fill="white"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-    <span id="btn-twitch-text">Увійти через Twitch</span>
-  </button>
-
-  <div class="divider">
-    <div class="divider-line"></div>
-    <div class="divider-text" id="divider-or">або</div>
-    <div class="divider-line"></div>
-  </div>
-
   <button class="login-btn btn-google" onclick="loginGoogle()">
-    <svg class="btn-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    <svg class="btn-icon" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
     <span id="btn-google-text">Увійти через Google</span>
   </button>
+
+  <div class="hint" id="hint">
+    Twitch підключається <span>всередині панелі</span> після входу
+  </div>
 
   <div class="status-msg" id="status"></div>
 
   <div class="features">
+    <div class="feature"><span class="feature-icon">🔐</span> <span class="i18n" data-key="f0">Один акаунт на всіх пристроях</span></div>
     <div class="feature"><span class="feature-icon">🎵</span> <span class="i18n" data-key="f1">Черга треків через Twitch Channel Points</span></div>
     <div class="feature"><span class="feature-icon">🎛</span> <span class="i18n" data-key="f2">DJ панель з повним керуванням</span></div>
     <div class="feature"><span class="feature-icon">🎬</span> <span class="i18n" data-key="f3">Кастомний віджет для OBS</span></div>
@@ -95,6 +88,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// Якщо вже залогінений — одразу на панель
 onAuthStateChanged(auth, (user) => {
   if (user) window.location.href = './panel.html';
 });
@@ -103,17 +97,10 @@ window.loginGoogle = async function() {
   setStatus(T('connecting'));
   try {
     await signInWithPopup(auth, new GoogleAuthProvider());
+    // onAuthStateChanged автоматично перенаправить на panel.html
   } catch(e) {
     setStatus(T('error') + ': ' + (e.message || T('tryAgain')));
   }
-};
-
-window.loginTwitch = async function() {
-  setStatus(T('redirecting'));
-  const CLIENT_ID = 'bt9iq3fqob2gxmr1li2jecy6bm0ppf';
-  const REDIRECT = window.location.origin + window.location.pathname.replace('index.html','') + 'panel.html';
-  localStorage.setItem('auth_method', 'twitch');
-  window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=token&scope=channel:read:redemptions+user:read:email`;
 };
 
 function setStatus(msg) {
@@ -124,43 +111,40 @@ function setStatus(msg) {
 const TRANSLATIONS = {
   uk: {
     tagline: 'Музика на стрімі через Twitch Channel Points',
-    btnTwitch: 'Увійти через Twitch',
     btnGoogle: 'Увійти через Google',
-    or: 'або',
+    hint: 'Twitch підключається <span>всередині панелі</span> після входу',
+    f0: 'Один акаунт на всіх пристроях',
     f1: 'Черга треків через Twitch Channel Points',
     f2: 'DJ панель з повним керуванням',
     f3: 'Кастомний віджет для OBS',
     f4: 'Налаштування вигляду',
     connecting: 'Підключення...',
-    redirecting: 'Перенаправлення на Twitch...',
     error: 'Помилка',
     tryAgain: 'спробуй ще раз',
   },
   en: {
     tagline: 'Stream music via Twitch Channel Points',
-    btnTwitch: 'Sign in with Twitch',
     btnGoogle: 'Sign in with Google',
-    or: 'or',
+    hint: 'Twitch is connected <span>inside the panel</span> after login',
+    f0: 'One account across all devices',
     f1: 'Song queue via Twitch Channel Points',
     f2: 'Full-featured DJ control panel',
     f3: 'Custom OBS widget',
     f4: 'Appearance customization',
     connecting: 'Connecting...',
-    redirecting: 'Redirecting to Twitch...',
     error: 'Error',
     tryAgain: 'try again',
   },
   ru: {
     tagline: 'Музыка на стриме через Twitch Channel Points',
-    btnTwitch: 'Войти через Twitch',
     btnGoogle: 'Войти через Google',
-    or: 'или',
+    hint: 'Twitch подключается <span>внутри панели</span> после входа',
+    f0: 'Один аккаунт на всех устройствах',
     f1: 'Очередь треков через Twitch Channel Points',
     f2: 'DJ панель с полным управлением',
     f3: 'Кастомный виджет для OBS',
     f4: 'Настройка внешнего вида',
     connecting: 'Подключение...',
-    redirecting: 'Перенаправление на Twitch...',
     error: 'Ошибка',
     tryAgain: 'попробуй ещё раз',
   }
@@ -179,24 +163,23 @@ window.setLang = function(lang) {
 };
 
 function applyLang() {
-  // Update active button
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   const map = { uk: 0, en: 1, ru: 2 };
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.lang-btn')[map[currentLang]]?.classList.add('active');
 
-  // Apply translations
   document.getElementById('tagline').textContent = T('tagline');
-  document.getElementById('btn-twitch-text').textContent = T('btnTwitch');
   document.getElementById('btn-google-text').textContent = T('btnGoogle');
-  document.getElementById('divider-or').textContent = T('or');
+  document.getElementById('hint').innerHTML = T('hint');
 
   document.querySelectorAll('.i18n[data-key]').forEach(el => {
-    const key = el.getAttribute('data-key');
-    el.textContent = T(key);
+    el.innerHTML = T(el.getAttribute('data-key'));
   });
 
-  // Update page title
-  const titles = { uk: 'StreamDJ — музика на стрімі', en: 'StreamDJ — stream music', ru: 'StreamDJ — музыка на стриме' };
+  const titles = {
+    uk: 'StreamDJ — музика на стрімі',
+    en: 'StreamDJ — stream music',
+    ru: 'StreamDJ — музыка на стриме'
+  };
   document.title = titles[currentLang];
 }
 
