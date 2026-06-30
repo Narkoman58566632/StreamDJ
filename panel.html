@@ -203,18 +203,6 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
       <div class="pl-status" id="my-pl-status"></div>
       <div id="my-playlists-list"><div class="empty">плейлистів немає</div></div>
     </div>
-    <div class="section">
-      <div class="section-title" id="s-viewer-playlists">🟣 плейлисти від глядачів (channel points)</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;" id="lbl-viewer-desc">
-        Глядач кидає посилання на YouTube плейлист — всі треки автоматично додаються в чергу.<br>
-        Назва нагороди для плейлистів:
-      </div>
-      <div class="reward-label" id="lbl-reward-pl-name">назва нагороди для плейлиста (на Twitch)</div>
-      <input class="reward-input" id="playlist-reward-name" type="text" placeholder="📂 Замов плейлист" value="📂 Замов плейлист" onchange="saveRewards()">
-      <div class="reward-hint" id="lbl-reward-hint1">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:10px;" id="lbl-max-tracks">Макс. треків з одного плейлиста глядача:</div>
-      <input type="number" class="num-input" id="max-pl-tracks" value="10" min="1" max="50" style="margin-top:6px;" onchange="saveRewards()">
-    </div>
   </div>
 
   <div class="tab-content" id="tab-twitch">
@@ -232,6 +220,18 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
         <div class="reward-hint" id="lbl-reward-hint2">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
       </div>
       <div class="log-box" id="twitch-log"></div>
+    </div>
+    <div class="section">
+      <div class="section-title" id="s-viewer-playlists">🟣 плейлисти від глядачів (channel points)</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;" id="lbl-viewer-desc">
+        Глядач кидає посилання на YouTube плейлист — всі треки автоматично додаються в чергу.<br>
+        Назва нагороди для плейлистів:
+      </div>
+      <div class="reward-label" id="lbl-reward-pl-name">назва нагороди для плейлиста (на Twitch)</div>
+      <input class="reward-input" id="playlist-reward-name" type="text" placeholder="📂 Замов плейлист" value="📂 Замов плейлист" onchange="saveRewards()">
+      <div class="reward-hint" id="lbl-reward-hint1">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:10px;" id="lbl-max-tracks">Макс. треків з одного плейлиста глядача:</div>
+      <input type="number" class="num-input" id="max-pl-tracks" value="10" min="1" max="50" style="margin-top:6px;" onchange="saveRewards()">
     </div>
   </div>
 
@@ -861,8 +861,11 @@ function updateTwitchUIState(){
   }
 }
 
-// Автопідключення Twitch якщо токен збережений
+// Автопідключення Twitch — тільки якщо токен вже збережений (тихо, без запиту авторизації)
+let twitchAutoConnectDone = false;
 setTimeout(()=>{
+  if (twitchAutoConnectDone) return;
+  twitchAutoConnectDone = true;
   const t=localStorage.getItem('twitch_panel_token');
   if(t && uid) initTwitchEventSub(t);
 },1000);
