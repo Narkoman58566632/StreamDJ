@@ -277,9 +277,11 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
         <div class="setting-row"><div class="setting-label" id="l-w-pill">Черга (пілюлі)</div><div class="color-pick"><input type="color" id="w-pill" value="#aaaaaa" oninput="syncHexW(this)"><input class="color-hex" type="text" id="wh-pill" value="#aaaaaa" oninput="hexInputW('w-pill',this)"></div></div>
         <div class="setting-row"><div class="setting-label" id="l-w-fontsize">Розмір текста (px)</div><div class="color-pick"><input type="number" class="num-input" id="w-fontsize" value="13" min="8" max="32"></div></div>
         <div class="setting-row"><div class="setting-label" id="l-w-scroll">Швидкість прокрутки (сек)</div><div class="color-pick"><input type="number" class="num-input" id="w-scroll" value="12" min="4" max="60"></div></div>
-      </div>
-      <div><button class="settings-save" onclick="saveWidgetTheme()" id="b-save-obs">🎬 Застосувати до OBS</button><button class="settings-reset" onclick="resetWidgetTheme()" id="b-reset-obs">↺ Скинути</button></div>
-    </div>
+     <div>
+  <button class="settings-save" onclick="saveWidgetTheme()" id="b-save-obs">🎬 Застосувати до OBS</button>
+  <button class="settings-reset" onclick="resetWidgetTheme()" id="b-reset-obs">↺ Скинути</button>
+  <button class="settings-reset" onclick="window.location.href='./constructor.html'">🎨 Відкрити конструктор</button>
+</div>
   </div>
 </div>
 
