@@ -404,11 +404,12 @@ const LANGUAGES = {
   }
 };
 
-let currentLang = localStorage.getItem('panel_lang') || 'uk';
+let currentLang = localStorage.getItem('streamdj_lang') || localStorage.getItem('panel_lang') || 'uk';
 
 window.changeLanguage = function(lang) {
   currentLang = lang;
-  localStorage.setItem('panel_lang', lang);
+  localStorage.setItem('streamdj_lang', lang);
+  if (uid) set(langRef(), lang);
   applyLocalization();
   render();
   renderMyPlaylists();
@@ -471,6 +472,7 @@ function applyLocalization() {
   document.getElementById('m-obs-desc').textContent = t.m_obs_desc;
   document.getElementById('m-obs-copy').textContent = t.m_obs_copy;
   document.getElementById('m-obs-close').textContent = t.m_obs_close;
+  document.getElementById('s-queue-title').textContent = t.s_queue_title;
   updateTwitchUIState();
 }
 
@@ -480,6 +482,7 @@ function wtRef()      { return ref(db, `users/${uid}/widget_theme`); }
 function plRef()      { return ref(db, `users/${uid}/playlists`); }
 function plCfgRef()   { return ref(db, `users/${uid}/playlist_config`); }
 function rewardCfgRef(){ return ref(db, `users/${uid}/reward_config`); }
+function langRef()    { return ref(db, `users/${uid}/lang`); }
 
 // ── FIX: onAuthStateChanged — тільки Google, без Twitch як метод входу ──
 onAuthStateChanged(auth, async (user) => {
