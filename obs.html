@@ -208,7 +208,8 @@ function markDoneAndNext() {
   const keyToRemove = currentKey;
   const played = queue.find(t => t.key === keyToRemove);
   currentKey = null;
-  if (played) {
+  const fromViewer = played && (played.source === 'twitch_points' || played.source === 'twitch_playlist');
+  if (played && fromViewer) {
     const hRef = ref(db, `users/${uid}/history`);
     push(hRef, {
       title: played.title || '', from: played.from || '', id: played.id || '', playedAt: Date.now()
