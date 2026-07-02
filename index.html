@@ -29,6 +29,34 @@ body{background:#0d0d0d;min-height:100vh;display:flex;flex-direction:column;alig
 .lang-btn.active{background:#6441a5;border-color:#6441a5;color:#fff;}
 .hint{font-size:11px;color:#333;margin-top:20px;text-align:center;line-height:1.6;}
 .hint span{color:#6441a5;}
+
+/* ── Адаптивність: планшети ── */
+@media(max-width:768px){
+  .card{max-width:440px;padding:40px 30px;}
+}
+
+/* ── Адаптивність: телефони ── */
+@media(max-width:480px){
+  body{padding:16px;}
+  .card{padding:32px 22px;border-radius:20px;}
+  .logo{font-size:24px;}
+  .tagline{font-size:12px;margin-bottom:26px;}
+  .login-btn{padding:15px;font-size:13px;}
+  .features{margin-top:28px;gap:8px;}
+}
+
+/* ── Дуже маленькі екрани ── */
+@media(max-width:360px){
+  .card{padding:26px 16px;}
+  .logo{font-size:22px;}
+  .lang-btn{padding:5px 9px;font-size:10px;}
+}
+
+/* ── Великі екрани (ПК) ── */
+@media(min-width:1200px){
+  .card{max-width:440px;padding:56px 42px;}
+  .logo{font-size:32px;}
+}
 </style>
 </head>
 <body>

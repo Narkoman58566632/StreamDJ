@@ -98,6 +98,45 @@ select.select-input{background:var(--bg3);border:1px solid var(--border2);border
 .loading-screen .logo{font-family:'Unbounded',sans-serif;font-size:24px;color:#fff;}
 .loading-screen .logo span{color:#6441a5;}
 .loading-screen p{font-size:12px;color:#555;}
+
+/* ── Прев'ю OBS-канвасу: масштабується під ширину екрана ── */
+.canvas-scale-wrap{width:100%;max-width:520px;margin:0 auto;}
+
+/* ── Планшети ── */
+@media(max-width:900px){
+  .controls{max-height:none;padding:16px;}
+  .preview-pane{padding:24px 16px;}
+}
+
+/* ── Телефони ── */
+@media(max-width:640px){
+  .page-header{padding:12px 14px;}
+  .header-left h1{font-size:14px;}
+  .header-left .subtitle{font-size:10px;}
+  .save-bar{width:100%;justify-content:flex-end;flex-wrap:wrap;gap:6px;}
+  .back-link,.btn-reset,.btn-save{padding:8px 12px;font-size:11px;}
+  .controls{padding:14px;}
+  .section{padding:14px;border-radius:12px;margin-bottom:12px;}
+  .settings-grid{grid-template-columns:1fr;}
+  .style-grid{grid-template-columns:1fr 1fr;}
+  .preview-pane{padding:18px 10px;gap:14px;}
+  .preview-hint{font-size:10.5px;}
+}
+
+/* ── Дуже маленькі екрани ── */
+@media(max-width:380px){
+  .header-left h1{font-size:13px;}
+  .save-bar span.save-status{display:none;}
+}
+
+/* ── Дотик: більші тап-зони ── */
+@media(pointer:coarse){
+  .back-link,.btn-reset,.btn-save,.style-card,.reset-layout-btn{min-height:40px;}
+  .switch{width:44px;height:26px;}
+  .switch-track:before{width:20px;height:20px;}
+  .switch input:checked + .switch-track:before{transform:translateX(18px);}
+  .odrag{padding:6px 8px;}
+}
 </style>
 </head>
 <body>
@@ -215,6 +254,7 @@ select.select-input{background:var(--bg3);border:1px solid var(--border2);border
 
   <div class="preview-pane">
     <div class="preview-hint">Це <b>точна копія</b> того, що побачиш в OBS (Browser Source). Перетягуй жовті підказки, щоб рухати елементи.</div>
+    <div class="canvas-scale-wrap" id="canvas-scale-wrap">
     <div class="canvas-frame" id="canvas-frame" style="width:520px;height:180px;">
       <span class="canvas-label">OBS Browser Source · 480×160</span>
       <div class="owidget" id="owidget">
@@ -239,6 +279,7 @@ select.select-input{background:var(--bg3);border:1px solid var(--border2);border
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -513,7 +554,21 @@ onAuthStateChanged(auth, (user) => {
   loadTheme();
   $('loading').style.display = 'none';
   $('app').style.display = 'block';
+  fitCanvasPreview();
 });
+
+// ── Адаптивне масштабування прев'ю під ширину екрана (телефони/планшети) ──
+function fitCanvasPreview() {
+  const wrap = $('canvas-scale-wrap');
+  const frame = $('canvas-frame');
+  if (!wrap || !frame) return;
+  const naturalW = 520, naturalH = 180;
+  const scale = Math.min(1, wrap.clientWidth / naturalW);
+  frame.style.transformOrigin = 'top left';
+  frame.style.transform = `scale(${scale})`;
+  wrap.style.height = (naturalH * scale) + 'px';
+}
+window.addEventListener('resize', () => { clearTimeout(window._fitT); window._fitT = setTimeout(fitCanvasPreview, 100); });
 </script>
 </body>
 </html>
