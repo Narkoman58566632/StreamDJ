@@ -368,7 +368,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
           <div class="stat-label" id="stat-viewers-label">Унікальних глядачів</div>
         </div>
       </div>
-      <button class="settings-reset" onclick="resetSessionStats()" id="b-reset-session" style="margin-top:14px;">↺ Скинути лічильник сесії</button>
+      <button class="settings-reset" onclick="resetSessionStats()" style="margin-top:14px;" id="b-reset-session">↺ Скинути лічильник сесії</button>
     </div>
 
     <div class="section">
@@ -379,7 +379,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
     <div class="section">
       <div class="section-title"><span id="s-recent-history">🕘 останні зіграні треки</span></div>
       <div id="history-list"><div class="empty" id="empty-history">історія порожня</div></div>
-      <button class="settings-reset" onclick="clearHistory()" id="b-clear-history" style="margin-top:14px;color:var(--red-btn-text);">🗑️ Очистити всю історію</button>
+      <button class="settings-reset" onclick="clearHistory()" style="margin-top:14px;color:var(--red-btn-text);" id="b-clear-history">🗑️ Очистити всю історію</button>
     </div>
   </div>
 
@@ -601,7 +601,7 @@ function applyLocalization() {
   document.getElementById('b-reset-session').textContent = t.b_reset_session;
   document.getElementById('s-top-viewers').textContent = t.s_top_viewers;
   document.getElementById('s-recent-history').textContent = t.s_recent_history;
-  document.getElementById('b-reset-obs').textContent = t.b_reset_obs;
+  document.getElementById('b_reset_obs').textContent = t.b_reset_obs;
   document.getElementById('b-open-constructor').textContent = t.b_open_constructor;
   updateTwitchUIState();
   renderStats();
@@ -641,16 +641,11 @@ onAuthStateChanged(auth, async (user) => {
   const twitchTok = localStorage.getItem('twitch_panel_token');
   if (twitchTok) {
     try {
-      const _ctrl = new AbortController();
-      const _timeout = setTimeout(() => _ctrl.abort(), 5000);
       const r = await fetch('https://api.twitch.tv/helix/users', {
-        headers: {'Authorization':`Bearer ${twitchTok}`,'Client-Id':TWITCH_CLIENT_ID},
-        signal: _ctrl.signal
+        headers: {'Authorization':`Bearer ${twitchTok}`,'Client-Id':TWITCH_CLIENT_ID}
       });
-      clearTimeout(_timeout);
       if (r.ok) { const d = await r.json(); userDisplayName = d.data[0]?.display_name || ''; }
-      else if (r.status === 401) { localStorage.removeItem('twitch_panel_token'); }
-    } catch (e) { console.warn('Twitch user fetch failed/timed out:', e); }
+    } catch {}
   }
   if (!userDisplayName) {
     userDisplayName = user.displayName || user.email || 'Стример';
