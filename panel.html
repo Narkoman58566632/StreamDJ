@@ -345,7 +345,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Inter',sans-serif;paddin
      <div>
   <button class="settings-save" onclick="saveWidgetTheme()" id="b-save-obs">🎬 Застосувати до OBS</button>
   <button class="settings-reset" onclick="resetWidgetTheme()" id="b-reset-obs">↺ Скинути</button>
-  <button class="settings-reset" onclick="window.location.href='./constructor.html'">🎨 Відкрити конструктор</button>
+  <button class="settings-reset" onclick="window.location.href='./constructor.html'" id="b-open-constructor">🎨 Відкрити конструктор</button>
 </div>
   </div>
 </div>
@@ -601,7 +601,8 @@ function applyLocalization() {
   document.getElementById('b-reset-session').textContent = t.b_reset_session;
   document.getElementById('s-top-viewers').textContent = t.s_top_viewers;
   document.getElementById('s-recent-history').textContent = t.s_recent_history;
-  document.getElementById('b-clear-history').textContent = t.b_clear_history;
+  document.getElementById('b_reset_obs').textContent = t.b_reset_obs;
+  document.getElementById('b-open-constructor').textContent = t.b_open_constructor;
   updateTwitchUIState();
   renderStats();
 }
