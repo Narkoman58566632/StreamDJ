@@ -80,6 +80,8 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .playlist-pill{background:var(--green-bg);border:1px solid var(--green-border);border-radius:99px;font-size:9px;color:var(--green);padding:3px 9px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;margin-left:4px;}
 .btn-del{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;flex-shrink:0;}
 .btn-del:hover{color:var(--red-btn-text);border-color:var(--red-btn-text);}
+.btn-ban{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;flex-shrink:0;}
+.btn-ban:hover{color:#ff9900;border-color:#ff9900;}
 .empty{font-size:13px;color:var(--text2);padding:12px 0;text-align:center;}
 .music-controls{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
 .music-btn{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:12px;padding:14px 10px;font-size:11px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;line-height:1.3;}
@@ -155,6 +157,10 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .hist-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hist-meta{font-size:11px;color:var(--text2);margin-top:2px;}
 .hist-count{background:var(--bg2);border:1px solid var(--border2);border-radius:99px;font-size:11px;color:var(--text);padding:3px 10px;white-space:nowrap;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;}
+.ban-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.ban-item:last-child{border-bottom:none;}
+.ban-name{font-size:13px;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ban-meta{font-size:11px;color:var(--text2);}
 
 /* ── Центрування контенту на великих екранах (ПК) ── */
 #app{max-width:960px;margin:0 auto;}
@@ -251,6 +257,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
     <div class="tab active" onclick="switchTab('queue')" id="t-queue">🎵 Черга</div>
     <div class="tab" onclick="switchTab('playlists')" id="t-playlists">📂 Плейлисти</div>
     <div class="tab" onclick="switchTab('twitch')" id="t-twitch">🟣 Twitch</div>
+    <div class="tab" onclick="switchTab('bans')" id="t-bans">🚫 Бан-лист</div>
     <div class="tab" onclick="switchTab('settings')" id="t-settings">⚙️ Вигляд</div>
     <div class="tab" onclick="switchTab('stats')" id="t-stats">📊 Статистика</div>
   </div>
@@ -317,6 +324,28 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
       <div class="reward-hint" id="lbl-reward-hint1">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
       <div style="font-size:11px;color:var(--text2);margin-top:10px;" id="lbl-max-tracks">Макс. треків з одного плейлиста глядача:</div>
       <input type="number" class="num-input" id="max-pl-tracks" value="10" min="1" max="50" style="margin-top:6px;" onchange="saveRewards()">
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-bans">
+    <div class="section">
+      <div class="section-title" id="s-ban-users">🚫 забанені глядачі</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;" id="lbl-ban-users-desc">Треки від цих глядачів не будуть потрапляти в чергу (ні через Channel Points, ні через плейлисти).</div>
+      <div class="pl-add-row">
+        <input class="pl-url-input" id="ban-user-input" type="text" placeholder="Twitch нікнейм глядача...">
+        <button class="pl-add-btn" id="ban-user-add-btn" onclick="addBannedUser()">🚫 Забанити</button>
+      </div>
+      <div id="banned-users-list"><div class="empty" id="empty-banned-users">немає забанених глядачів</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title" id="s-ban-tracks">🚫 забанені треки</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;" id="lbl-ban-tracks-desc">Ці треки більше не будуть потрапляти в чергу, навіть якщо їх замовлять глядачі.</div>
+      <div class="pl-add-row">
+        <input class="pl-url-input" id="ban-track-input" type="text" placeholder="Посилання на YouTube відео або video ID...">
+        <button class="pl-add-btn" id="ban-track-add-btn" onclick="addBannedTrack()">🚫 Забанити</button>
+      </div>
+      <div class="pl-status" id="ban-track-status"></div>
+      <div id="banned-tracks-list"><div class="empty" id="empty-banned-tracks">немає забанених треків</div></div>
     </div>
   </div>
 
@@ -437,6 +466,8 @@ let fallbackIndex = 0;
 let activeFallbackPlaylistId = null;
 let historyItems = [];
 let sessionStart = Date.now();
+let bannedUsers = {};
+let bannedTracks = {};
 
 const LANGUAGES = {
   uk: {
@@ -471,7 +502,14 @@ const LANGUAGES = {
     s_top_viewers:"🏆 топ глядачів",empty_top_viewers:"поки немає даних",times_word:"треків",
     s_recent_history:"🕘 останні зіграні треки",empty_history:"історія порожня",b_clear_history:"🗑️ Очистити всю історію",
     confirm_clear_history:"Видалити всю історію назавжди? Це не можна скасувати.",just_now:"щойно",min_ago:"хв тому",hour_ago:"год тому",day_ago:"дн тому",
-    b_reset_obs:"↺ Скинути"
+    b_reset_obs:"↺ Скинути",
+    tab_bans:"🚫 Бан-лист",s_ban_users:"🚫 забанені глядачі",lbl_ban_users_desc:"Треки від цих глядачів не будуть потрапляти в чергу (ні через Channel Points, ні через плейлисти).",
+    ban_user_placeholder:"Twitch нікнейм глядача...",ban_user_add:"🚫 Забанити",empty_banned_users:"немає забанених глядачів",
+    s_ban_tracks:"🚫 забанені треки",lbl_ban_tracks_desc:"Ці треки більше не будуть потрапляти в чергу, навіть якщо їх замовлять глядачі.",
+    ban_track_placeholder:"Посилання на YouTube відео або video ID...",ban_track_add:"🚫 Забанити",empty_banned_tracks:"немає забанених треків",
+    ban_track_url_error:"❌ Не вдалось розпізнати посилання на відео.",ban_track_added:"✅ Трек забанено",
+    confirm_unban_user:"Розбанити цього глядача?",confirm_unban_track:"Розбанити цей трек?",btn_unban:"Розбанити",
+    btn_ban_short:"🚫",banned_by_from:"забанено",queue_skip_banned:"⛔ Пропущено (глядач у бані)",track_skip_banned:"⛔ Пропущено (трек у бані)"
   },
   ru: {
     loading:"Загрузка...",subtitle_suffix:" — управление музыкой",obs_btn:"🎬 OBS линк",logout:"Выйти",
@@ -505,7 +543,14 @@ const LANGUAGES = {
     s_top_viewers:"🏆 топ зрителей",empty_top_viewers:"пока нет данных",times_word:"треков",
     s_recent_history:"🕘 последние сыгранные треки",empty_history:"история пуста",b_clear_history:"🗑️ Очистить всю историю",
     confirm_clear_history:"Удалить всю историю навсегда? Это нельзя отменить.",just_now:"только что",min_ago:"мин назад",hour_ago:"ч назад",day_ago:"дн назад",
-    b_reset_obs:"↺ Сбросить"
+    b_reset_obs:"↺ Сбросить",
+    tab_bans:"🚫 Бан-лист",s_ban_users:"🚫 забаненные зрители",lbl_ban_users_desc:"Треки от этих зрителей не будут попадать в очередь (ни через Channel Points, ни через плейлисты).",
+    ban_user_placeholder:"Twitch никнейм зрителя...",ban_user_add:"🚫 Забанить",empty_banned_users:"нет забаненных зрителей",
+    s_ban_tracks:"🚫 забаненные треки",lbl_ban_tracks_desc:"Эти треки больше не будут попадать в очередь, даже если их закажут зрители.",
+    ban_track_placeholder:"Ссылка на YouTube видео или video ID...",ban_track_add:"🚫 Забанить",empty_banned_tracks:"нет забаненных треков",
+    ban_track_url_error:"❌ Не удалось распознать ссылку на видео.",ban_track_added:"✅ Трек забанен",
+    confirm_unban_user:"Разбанить этого зрителя?",confirm_unban_track:"Разбанить этот трек?",btn_unban:"Разбанить",
+    btn_ban_short:"🚫",banned_by_from:"забанен",queue_skip_banned:"⛔ Пропущено (зритель забанен)",track_skip_banned:"⛔ Пропущено (трек забанен)"
   },
   en: {
     loading:"Loading...",subtitle_suffix:" — music control",obs_btn:"🎬 OBS Link",logout:"Logout",
@@ -539,7 +584,14 @@ const LANGUAGES = {
     s_top_viewers:"🏆 top viewers",empty_top_viewers:"no data yet",times_word:"tracks",
     s_recent_history:"🕘 recently played tracks",empty_history:"history is empty",b_clear_history:"🗑️ Clear all history",
     confirm_clear_history:"Delete the entire history forever? This cannot be undone.",just_now:"just now",min_ago:"min ago",hour_ago:"h ago",day_ago:"d ago",
-    b_reset_obs:"↺ Reset"
+    b_reset_obs:"↺ Reset",
+    tab_bans:"🚫 Ban List",s_ban_users:"🚫 banned viewers",lbl_ban_users_desc:"Tracks from these viewers won't enter the queue (via Channel Points or playlists).",
+    ban_user_placeholder:"Twitch username of the viewer...",ban_user_add:"🚫 Ban",empty_banned_users:"no banned viewers",
+    s_ban_tracks:"🚫 banned tracks",lbl_ban_tracks_desc:"These tracks will no longer enter the queue, even if a viewer requests them.",
+    ban_track_placeholder:"YouTube video link or video ID...",ban_track_add:"🚫 Ban",empty_banned_tracks:"no banned tracks",
+    ban_track_url_error:"❌ Could not recognize the video link.",ban_track_added:"✅ Track banned",
+    confirm_unban_user:"Unban this viewer?",confirm_unban_track:"Unban this track?",btn_unban:"Unban",
+    btn_ban_short:"🚫",banned_by_from:"banned",queue_skip_banned:"⛔ Skipped (viewer banned)",track_skip_banned:"⛔ Skipped (track banned)"
   }
 };
 
@@ -563,6 +615,7 @@ window.changeLanguage = function(lang) {
   applyLocalization();
   render();
   renderMyPlaylists();
+  renderBans();
 };
 
 function applyLocalization() {
@@ -633,8 +686,18 @@ function applyLocalization() {
   document.getElementById('s-recent-history').textContent = t.s_recent_history;
   document.getElementById('b-clear-history').textContent = t.b_clear_history;
   document.getElementById('b-reset-obs').textContent = t.b_reset_obs;
+  document.getElementById('t-bans').textContent = t.tab_bans;
+  document.getElementById('s-ban-users').textContent = t.s_ban_users;
+  document.getElementById('lbl-ban-users-desc').textContent = t.lbl_ban_users_desc;
+  document.getElementById('ban-user-input').placeholder = t.ban_user_placeholder;
+  document.getElementById('ban-user-add-btn').textContent = t.ban_user_add;
+  document.getElementById('s-ban-tracks').textContent = t.s_ban_tracks;
+  document.getElementById('lbl-ban-tracks-desc').textContent = t.lbl_ban_tracks_desc;
+  document.getElementById('ban-track-input').placeholder = t.ban_track_placeholder;
+  document.getElementById('ban-track-add-btn').textContent = t.ban_track_add;
   updateTwitchUIState();
   renderStats();
+  renderBans();
 }
 
 function qRef()       { return ref(db, `users/${uid}/queue`); }
@@ -645,6 +708,8 @@ function plRef()      { return ref(db, `users/${uid}/playlists`); }
 function plCfgRef()   { return ref(db, `users/${uid}/playlist_config`); }
 function rewardCfgRef(){ return ref(db, `users/${uid}/reward_config`); }
 function langRef()    { return ref(db, `users/${uid}/lang`); }
+function bannedUsersRef()  { return ref(db, `users/${uid}/banned_users`); }
+function bannedTracksRef() { return ref(db, `users/${uid}/banned_tracks`); }
 
 // ── FIX: onAuthStateChanged — тільки Google, без Twitch як метод входу ──
 onAuthStateChanged(auth, async (user) => {
@@ -697,6 +762,7 @@ onAuthStateChanged(auth, async (user) => {
   initPlaylists();
   initRewards();
   initHistory();
+  initBans();
 });
 
 window.doLogout = async function() {
@@ -738,6 +804,99 @@ window.saveRewards = async function() {
   const maxPlTracks = parseInt(document.getElementById('max-pl-tracks').value) || 10;
   await set(rewardCfgRef(), { trackReward, playlistReward, maxPlTracks });
 };
+
+// ── BANS ──
+function normUser(name) { return (name || '').trim().toLowerCase().replace(/^@/, ''); }
+function initBans() {
+  onValue(bannedUsersRef(), (snap) => {
+    bannedUsers = snap.val() || {};
+    renderBans();
+  });
+  onValue(bannedTracksRef(), (snap) => {
+    bannedTracks = snap.val() || {};
+    renderBans();
+  });
+}
+function isUserBanned(name) {
+  return !!bannedUsers[normUser(name)];
+}
+function isTrackBanned(videoId) {
+  return !!bannedTracks[videoId];
+}
+window.addBannedUser = async function() {
+  if (!uid) return;
+  const input = document.getElementById('ban-user-input');
+  const key = normUser(input.value);
+  if (!key) return;
+  await update(bannedUsersRef(), { [key]: { name: input.value.trim(), ts: Date.now() } });
+  input.value = '';
+};
+window.banUserByName = async function(name) {
+  if (!uid) return;
+  const key = normUser(name);
+  if (!key) return;
+  await update(bannedUsersRef(), { [key]: { name: name, ts: Date.now() } });
+};
+window.unbanUser = async function(key) {
+  if (!confirm(LANGUAGES[currentLang].confirm_unban_user)) return;
+  await remove(ref(db, `users/${uid}/banned_users/${key}`));
+};
+window.addBannedTrack = async function() {
+  const t = LANGUAGES[currentLang];
+  if (!uid) return;
+  const input = document.getElementById('ban-track-input');
+  const raw = input.value.trim();
+  if (!raw) return;
+  const vid = extractVideoId(raw) || (/^[A-Za-z0-9_-]{11}$/.test(raw) ? raw : null);
+  if (!vid) { setBanTrackStatus(t.ban_track_url_error, true); return; }
+  let title = vid;
+  try {
+    const r = await fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${vid}&format=json`);
+    if (r.ok) { const d = await r.json(); title = d.title; }
+  } catch {}
+  await update(bannedTracksRef(), { [vid]: { title, ts: Date.now() } });
+  input.value = '';
+  setBanTrackStatus(`${t.ban_track_added}: "${title}"`, false);
+};
+window.banTrackById = async function(videoId, title) {
+  if (!uid || !videoId) return;
+  await update(bannedTracksRef(), { [videoId]: { title: title || videoId, ts: Date.now() } });
+};
+window.unbanTrack = async function(videoId) {
+  if (!confirm(LANGUAGES[currentLang].confirm_unban_track)) return;
+  await remove(ref(db, `users/${uid}/banned_tracks/${videoId}`));
+};
+function setBanTrackStatus(msg, isErr=false) {
+  const el = document.getElementById('ban-track-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isErr ? '#e08080' : 'var(--green)';
+}
+function renderBans() {
+  const t = LANGUAGES[currentLang];
+  const usersEl = document.getElementById('banned-users-list');
+  const usersArr = Object.entries(bannedUsers);
+  if (usersEl) {
+    usersEl.innerHTML = usersArr.length === 0
+      ? `<div class="empty">${t.empty_banned_users}</div>`
+      : usersArr.map(([key, v]) => `
+        <div class="ban-item">
+          <div class="ban-name">🙅 ${(v && v.name) ? v.name : key}</div>
+          <button class="btn-del" onclick="unbanUser('${key}')">${t.btn_unban}</button>
+        </div>`).join('');
+  }
+  const tracksEl = document.getElementById('banned-tracks-list');
+  const tracksArr = Object.entries(bannedTracks);
+  if (tracksEl) {
+    tracksEl.innerHTML = tracksArr.length === 0
+      ? `<div class="empty">${t.empty_banned_tracks}</div>`
+      : tracksArr.map(([vid, v]) => `
+        <div class="ban-item">
+          <div class="ban-name">🎵 ${(v && v.title) ? v.title : vid}</div>
+          <button class="btn-del" onclick="unbanTrack('${vid}')">${t.btn_unban}</button>
+        </div>`).join('');
+  }
+}
 
 // ── YOUTUBE ──
 function extractPlaylistId(text) {
@@ -984,6 +1143,13 @@ async function handleRedemption(ev){
   const playlistReward = document.getElementById('playlist-reward-name').value.trim();
   const maxTracks = parseInt(document.getElementById('max-pl-tracks').value) || 10;
   log(`🎁 ${userName}: "${rewardName}" → "${input}"`, 'info');
+
+  // ── BAN CHECK: глядач у бані — повністю ігноруємо запит ──
+  if (isUserBanned(userName)) {
+    log(`${t.queue_skip_banned}: ${userName}`, 'err');
+    return;
+  }
+
   if (playlistReward && rewardName.toLowerCase() === playlistReward.toLowerCase()) {
     const plId = extractPlaylistId(input);
     if (!plId) { log(`${t.log_not_pl}${userName}`, 'err'); return; }
@@ -991,6 +1157,7 @@ async function handleRedemption(ev){
       const tracks = await fetchPlaylistTracks(plId, maxTracks);
       if (!tracks.length) { return; }
       for (const tr of tracks) {
+        if (isTrackBanned(tr.id)) { log(`${t.track_skip_banned}: ${tr.title}`, 'err'); continue; }
         await push(qRef(), { id: tr.id, title: tr.title, channel: tr.channel || '', from: userName, ts: Date.now(), status:'approved', source:'twitch_playlist' });
       }
     } catch(e) { log('❌ Playlist error: ' + e.message, 'err'); }
@@ -999,6 +1166,13 @@ async function handleRedemption(ev){
   if (trackReward && rewardName.toLowerCase() !== trackReward.toLowerCase()) { log(t.log_skip_reward, 'info'); return; }
   const vid = extractVideoId(input);
   if (!vid) { log(`${t.log_not_url}${userName}`, 'err'); return; }
+
+  // ── BAN CHECK: конкретний трек у бані ──
+  if (isTrackBanned(vid)) {
+    log(`${t.track_skip_banned}: ${vid}`, 'err');
+    return;
+  }
+
   let title = 'YouTube track', channel = '';
   try {
     const r = await fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${vid}&format=json`);
@@ -1079,6 +1253,7 @@ function render(){
         <div class="q-name">${item.title}${item.source==='twitch_points'?'<span class="twitch-pill">🟣 points</span>':''}${item.source==='twitch_playlist'?'<span class="twitch-pill">🟣 playlist</span>':''}${item.source==='playlist'?'<span class="playlist-pill">📂 auto</span>':''}</div>
         <div class="q-from">${t.from_user} ${item.from}</div>
       </div>
+      <button class="btn-ban" title="${t.ban_user_add}" onclick="banUserByName('${(item.from||'').replace(/'/g,"\\'")}');banTrackById('${item.id||''}','${(item.title||'').replace(/'/g,"\\'")}');reject('${item.key}')">${t.btn_ban_short}</button>
       <button class="btn-del" onclick="reject('${item.key}')">✗</button>
     </div>`).join('');
 }
@@ -1155,7 +1330,7 @@ window.clearHistory=async function(){
   await remove(historyRef());
 };
 window.switchTab=function(name){
-  const names=['queue','playlists','twitch','settings','stats'];
+  const names=['queue','playlists','twitch','bans','settings','stats'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
