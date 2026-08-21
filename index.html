@@ -5,100 +5,298 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StreamDJ — музика на стрімі</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#0d0d0d;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Inter',sans-serif;padding:24px;}
-@keyframes glow{0%,100%{box-shadow:0 0 20px #4285F444;}50%{box-shadow:0 0 40px #4285F488;}}
+body{
+  background:#0d0d0d;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(100,65,165,.18), transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(64,224,208,.12), transparent 45%);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;padding:24px;overflow-x:hidden;
+}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.card{background:#161616;border:1px solid #2a2a2a;border-radius:24px;padding:48px 36px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;animation:fadeUp 0.5s ease;}
-.logo{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:6px;text-align:center;}
-.logo span{color:#6441a5;}
-.tagline{font-size:13px;color:#555;margin-bottom:32px;text-align:center;}
-.login-btn{width:100%;border:none;border-radius:14px;padding:16px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Unbounded',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;transition:all 0.2s;letter-spacing:0.01em;}
-.btn-google{background:#fff;color:#333;animation:glow 3s ease-in-out infinite;}
-.btn-google:hover{background:#f0f0f0;transform:translateY(-2px);box-shadow:0 8px 24px rgba(66,133,244,0.3);}
-.btn-icon{width:22px;height:22px;flex-shrink:0;}
-.features{margin-top:36px;width:100%;display:flex;flex-direction:column;gap:10px;}
-.feature{display:flex;align-items:center;gap:10px;font-size:12px;color:#555;}
-.feature-icon{font-size:16px;}
-.status-msg{font-size:12px;color:#e08080;margin-top:16px;text-align:center;min-height:18px;}
-.lang-switcher{display:flex;gap:6px;margin-bottom:28px;}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 30px rgba(100,65,165,.35), 0 0 0 1px #2a2a2a;}
+  50%{box-shadow:0 0 55px rgba(64,224,208,.25), 0 0 0 1px #2a2a2a;}
+}
+
+.logo{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:4px;text-align:center;}
+.logo span{background:linear-gradient(90deg,#8b6fd8,#40e0d0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.tagline{font-size:12.5px;color:#666;margin-bottom:10px;text-align:center;}
+
+.feature-strip{display:flex;gap:14px;margin-bottom:20px;}
+.feature-strip span{font-size:16px;opacity:.55;cursor:default;transition:opacity .2s;}
+.feature-strip span:hover{opacity:1;}
+
+.lang-switcher{display:flex;gap:6px;margin-bottom:20px;}
 .lang-btn{background:transparent;border:1px solid #2a2a2a;border-radius:8px;padding:5px 12px;font-size:11px;color:#555;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
 .lang-btn:hover{border-color:#6441a5;color:#aaa;}
 .lang-btn.active{background:#6441a5;border-color:#6441a5;color:#fff;}
-.hint{font-size:11px;color:#333;margin-top:20px;text-align:center;line-height:1.6;}
+
+/* ── 3D flip card ── */
+.flip-scene{width:100%;max-width:400px;perspective:1800px;animation:fadeUp .6s ease;}
+.flip-card{
+  position:relative;width:100%;min-height:660px;
+  transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.6,-.28,.735,.045);
+  animation:glowPulse 4s ease-in-out infinite;
+  border-radius:24px;
+}
+.flip-card.flipped{transform:rotateY(180deg);}
+
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:#161616;border:1px solid #2a2a2a;border-radius:24px;
+  padding:36px 30px;display:flex;flex-direction:column;align-items:center;
+  overflow-y:auto;
+}
+.face-back{transform:rotateY(180deg);}
+
+.face-title{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:600;color:#fff;text-align:center;margin-bottom:6px;}
+.face-sub{font-size:12.5px;color:#666;text-align:center;margin-bottom:26px;}
+
+/* ── inputs ── */
+.input-group{width:100%;position:relative;margin-bottom:12px;}
+.input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.5;pointer-events:none;}
+.text-input{
+  width:100%;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:12px;
+  padding:14px 16px 14px 42px;font-size:13.5px;color:#eee;font-family:'Inter',sans-serif;
+  transition:border-color .2s;
+}
+.text-input::placeholder{color:#555;}
+.text-input:focus{outline:none;border-color:#40e0d0;}
+
+.primary-btn{
+  width:100%;border:none;border-radius:14px;padding:15px;margin-top:6px;
+  font-size:13.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  font-family:'Unbounded',sans-serif;color:#0d0d0d;cursor:pointer;
+  background:linear-gradient(90deg,#8b6fd8,#40e0d0);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.primary-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(64,224,208,.25);}
+.primary-btn:active{transform:translateY(0);}
+
+.forgot-link{align-self:flex-end;font-size:11px;color:#666;cursor:pointer;margin-top:8px;}
+.forgot-link:hover{color:#40e0d0;}
+
+.divider{display:flex;align-items:center;gap:10px;width:100%;margin:22px 0 16px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#262626;}
+.divider span{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.05em;}
+
+/* ── social buttons ── */
+.social-btns{width:100%;display:flex;flex-direction:column;gap:10px;}
+.login-btn{
+  width:100%;border:none;border-radius:14px;padding:13px 16px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'Unbounded',sans-serif;display:flex;align-items:center;justify-content:center;gap:12px;
+  transition:transform .2s ease, box-shadow .2s ease;letter-spacing:.01em;
+}
+.login-btn:hover{transform:translateY(-2px);}
+.login-btn:active{transform:translateY(0);}
+.btn-icon{width:18px;height:18px;flex-shrink:0;}
+
+.btn-google{background:#fff;color:#333;}
+.btn-google:hover{box-shadow:0 8px 24px rgba(66,133,244,.28);}
+
+.btn-facebook{background:#1877F2;color:#fff;}
+.btn-facebook:hover{box-shadow:0 8px 24px rgba(24,119,242,.35);}
+
+.btn-playgames{background:#1a1a2e;color:#fff;border:1px solid #33334d;}
+.btn-playgames:hover{box-shadow:0 8px 24px rgba(64,224,208,.2);}
+
+.status-msg{font-size:12px;color:#e08080;margin-top:14px;text-align:center;min-height:16px;}
+.status-msg.ok{color:#40e0d0;}
+
+.switch-link{margin-top:22px;font-size:12.5px;color:#777;background:none;border:none;font-family:'Inter',sans-serif;cursor:pointer;}
+.switch-link b{color:#40e0d0;font-weight:600;}
+.switch-link:hover b{color:#8b6fd8;}
+
+.hint{font-size:10.5px;color:#333;margin-top:20px;text-align:center;line-height:1.6;}
 .hint span{color:#6441a5;}
 
-/* ── Адаптивність: планшети ── */
+/* ── планшети ── */
 @media(max-width:768px){
-  .card{max-width:440px;padding:40px 30px;}
+  .flip-scene{max-width:440px;}
 }
-
-/* ── Адаптивність: телефони ── */
+/* ── телефони: 3D-флип вимикаємо, просто показуємо/ховаємо ── */
 @media(max-width:480px){
   body{padding:16px;}
-  .card{padding:32px 22px;border-radius:20px;}
-  .logo{font-size:24px;}
-  .tagline{font-size:12px;margin-bottom:26px;}
-  .login-btn{padding:15px;font-size:13px;}
-  .features{margin-top:28px;gap:8px;}
-}
-
-/* ── Дуже маленькі екрани ── */
-@media(max-width:360px){
-  .card{padding:26px 16px;}
+  .flip-card{min-height:0;height:auto;}
+  .face{position:relative;padding:28px 20px;border-radius:20px;}
+  .flip-card.flipped .face-front{display:none;}
+  .flip-card:not(.flipped) .face-back{display:none;}
+  .flip-card.flipped{transform:none;}
+  .face-back{transform:none;}
   .logo{font-size:22px;}
+  .tagline{font-size:11.5px;}
+  .login-btn{padding:13px;font-size:12px;}
+}
+/* ── дуже маленькі екрани ── */
+@media(max-width:360px){
+  .face{padding:22px 15px;}
+  .logo{font-size:20px;}
   .lang-btn{padding:5px 9px;font-size:10px;}
 }
-
-/* ── Великі екрани (ПК) ── */
+/* ── ПК ── */
 @media(min-width:1200px){
-  .card{max-width:440px;padding:56px 42px;}
-  .logo{font-size:32px;}
+  .flip-scene{max-width:440px;}
+  .logo{font-size:30px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .flip-card{transition:none;animation:none;}
+  .login-btn,.primary-btn{transition:none;}
 }
 </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">Stream<span>DJ</span></div>
-  <div class="tagline" id="tagline">Музика на стрімі через Twitch Channel Points</div>
 
-  <div class="lang-switcher">
-    <button class="lang-btn active" onclick="setLang('uk')">🇺🇦 UA</button>
-    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
-    <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
-  </div>
+<div class="logo">Stream<span>DJ</span></div>
+<div class="tagline" id="tagline">Музика на стрімі через Twitch Channel Points</div>
 
-  <button class="login-btn btn-google" onclick="loginGoogle()">
-    <svg class="btn-icon" viewBox="0 0 24 24">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-    </svg>
-    <span id="btn-google-text">Увійти через Google</span>
-  </button>
+<div class="feature-strip">
+  <span title="Один акаунт на всіх пристроях">🔐</span>
+  <span title="Черга треків через Twitch Channel Points">🎵</span>
+  <span title="DJ панель з повним керуванням">🎛</span>
+  <span title="Кастомний віджет для OBS">🎬</span>
+  <span title="Налаштування вигляду">🎨</span>
+</div>
 
-  <div class="hint" id="hint">
-    Twitch підключається <span>всередині панелі</span> після входу
-  </div>
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="setLang('uk')">🇺🇦 UA</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+  <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+</div>
 
-  <div class="status-msg" id="status"></div>
+<div class="flip-scene">
+  <div class="flip-card" id="flipCard">
 
-  <div class="features">
-    <div class="feature"><span class="feature-icon">🔐</span> <span class="i18n" data-key="f0">Один акаунт на всіх пристроях</span></div>
-    <div class="feature"><span class="feature-icon">🎵</span> <span class="i18n" data-key="f1">Черга треків через Twitch Channel Points</span></div>
-    <div class="feature"><span class="feature-icon">🎛</span> <span class="i18n" data-key="f2">DJ панель з повним керуванням</span></div>
-    <div class="feature"><span class="feature-icon">🎬</span> <span class="i18n" data-key="f3">Кастомний віджет для OBS</span></div>
-    <div class="feature"><span class="feature-icon">🎨</span> <span class="i18n" data-key="f4">Налаштування вигляду</span></div>
+    <!-- FRONT: LOGIN -->
+    <div class="face face-front">
+      <div class="face-title" id="loginTitle">З поверненням</div>
+      <div class="face-sub" id="loginSub">Введи пошту та пароль</div>
+
+      <div class="input-group">
+        <span class="input-icon">✉️</span>
+        <input type="email" class="text-input" id="loginEmail" placeholder="Email" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="text-input" id="loginPassword" placeholder="Пароль" autocomplete="current-password">
+      </div>
+      <div class="forgot-link" id="forgotLink" onclick="resetPassword()">Забув(ла) пароль?</div>
+
+      <button class="primary-btn" id="loginSubmitText" onclick="loginEmail()">Увійти</button>
+
+      <div class="divider"><span id="dividerOr1">або</span></div>
+
+      <div class="social-btns">
+        <button class="login-btn btn-google" onclick="loginGoogle()">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span class="i18n" data-key="btnGoogle">Google</span>
+        </button>
+        <button class="login-btn btn-facebook" onclick="loginFacebook()">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="12" fill="#ffffff22"/>
+            <path fill="#fff" d="M15.5 8.5h-1.75c-.28 0-.5.22-.5.5v1.75h2.25l-.3 2.25h-1.95V19h-2.5v-6h-1.75v-2.25h1.75V9c0-1.66 1.34-3 3-3h1.75v2.5z"/>
+          </svg>
+          <span class="i18n" data-key="btnFacebook">Facebook</span>
+        </button>
+        <button class="login-btn btn-playgames" onclick="loginPlayGames()">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path fill="#00E1FF" d="M4 3.5v9L12 8 4 3.5z"/>
+            <path fill="#00F076" d="M4 12.5v8L12 16l-8-3.5z"/>
+            <path fill="#FFC900" d="M12 8l4 2.3L4 3.5 12 8z"/>
+            <path fill="#FF3B30" d="M12 16l4-2.3-12 6.8L12 16z"/>
+            <path fill="#00A0FF" d="M16 10.3l4 2.2-4 2.2v-4.4z"/>
+          </svg>
+          <span class="i18n" data-key="btnPlaygames">Play Ігри</span>
+        </button>
+      </div>
+
+      <div class="status-msg" id="status-front"></div>
+
+      <button class="switch-link" onclick="flip(true)">
+        <span id="toRegisterText">Немає акаунта? <b>Зареєструватися</b></span>
+      </button>
+
+      <div class="hint" id="hint">Twitch підключається <span>всередині панелі</span> після входу</div>
+    </div>
+
+    <!-- BACK: REGISTER -->
+    <div class="face face-back">
+      <div class="face-title" id="regTitle">Створити акаунт</div>
+      <div class="face-sub" id="regSub">Приєднуйся до StreamDJ</div>
+
+      <div class="input-group">
+        <span class="input-icon">👤</span>
+        <input type="text" class="text-input" id="regName" placeholder="Ім'я" autocomplete="name">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">✉️</span>
+        <input type="email" class="text-input" id="regEmail" placeholder="Email" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="text-input" id="regPassword" placeholder="Пароль (мін. 6 символів)" autocomplete="new-password">
+      </div>
+
+      <button class="primary-btn" id="regSubmitText" onclick="registerEmail()">Зареєструватися</button>
+
+      <div class="divider"><span id="dividerOr2">або</span></div>
+
+      <div class="social-btns">
+        <button class="login-btn btn-google" onclick="loginGoogle()">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span class="i18n" data-key="btnGoogle">Google</span>
+        </button>
+        <button class="login-btn btn-facebook" onclick="loginFacebook()">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="12" fill="#ffffff22"/>
+            <path fill="#fff" d="M15.5 8.5h-1.75c-.28 0-.5.22-.5.5v1.75h2.25l-.3 2.25h-1.95V19h-2.5v-6h-1.75v-2.25h1.75V9c0-1.66 1.34-3 3-3h1.75v2.5z"/>
+          </svg>
+          <span class="i18n" data-key="btnFacebook">Facebook</span>
+        </button>
+        <button class="login-btn btn-playgames" onclick="loginPlayGames()">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path fill="#00E1FF" d="M4 3.5v9L12 8 4 3.5z"/>
+            <path fill="#00F076" d="M4 12.5v8L12 16l-8-3.5z"/>
+            <path fill="#FFC900" d="M12 8l4 2.3L4 3.5 12 8z"/>
+            <path fill="#FF3B30" d="M12 16l4-2.3-12 6.8L12 16z"/>
+            <path fill="#00A0FF" d="M16 10.3l4 2.2-4 2.2v-4.4z"/>
+          </svg>
+          <span class="i18n" data-key="btnPlaygames">Play Ігри</span>
+        </button>
+      </div>
+
+      <div class="status-msg" id="status-back"></div>
+
+      <button class="switch-link" onclick="flip(false)">
+        <span id="toLoginText">Вже є акаунт? <b>Увійти</b></span>
+      </button>
+    </div>
+
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getAuth, signInWithPopup, GoogleAuthProvider,
+  getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  sendPasswordResetEmail, updateProfile,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -121,60 +319,182 @@ onAuthStateChanged(auth, (user) => {
   if (user) window.location.href = './panel.html';
 });
 
-window.loginGoogle = async function() {
-  setStatus(T('connecting'));
+function setStatus(msg, face, ok) {
+  const el = document.getElementById(face === 'back' ? 'status-back' : 'status-front');
+  el.textContent = msg;
+  el.classList.toggle('ok', !!ok);
+}
+
+function friendlyError(e) {
+  const map = {
+    'auth/invalid-email': T('errInvalidEmail'),
+    'auth/user-not-found': T('errUserNotFound'),
+    'auth/wrong-password': T('errWrongPassword'),
+    'auth/invalid-credential': T('errWrongPassword'),
+    'auth/email-already-in-use': T('errEmailInUse'),
+    'auth/weak-password': T('errWeakPassword'),
+    'auth/too-many-requests': T('errTooMany'),
+    'auth/missing-password': T('errMissingFields'),
+  };
+  return map[e.code] || (T('error') + ': ' + (e.message || T('tryAgain')));
+}
+
+// ── Email / Password ──
+window.loginEmail = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { setStatus(T('errMissingFields'), 'front'); return; }
+  setStatus(T('connectingEmail'), 'front');
   try {
-    await signInWithPopup(auth, new GoogleAuthProvider());
-    // onAuthStateChanged автоматично перенаправить на panel.html
+    await signInWithEmailAndPassword(auth, email, password);
   } catch(e) {
-    setStatus(T('error') + ': ' + (e.message || T('tryAgain')));
+    setStatus(friendlyError(e), 'front');
   }
 };
 
-function setStatus(msg) {
-  document.getElementById('status').textContent = msg;
-}
+window.registerEmail = async function() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  if (!email || !password) { setStatus(T('errMissingFields'), 'back'); return; }
+  if (password.length < 6) { setStatus(T('errWeakPassword'), 'back'); return; }
+  setStatus(T('connectingEmail'), 'back');
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    if (name) await updateProfile(cred.user, { displayName: name });
+  } catch(e) {
+    setStatus(friendlyError(e), 'back');
+  }
+};
+
+window.resetPassword = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { setStatus(T('errEnterEmailFirst'), 'front'); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setStatus(T('resetSent'), 'front', true);
+  } catch(e) {
+    setStatus(friendlyError(e), 'front');
+  }
+};
+
+// ── Social ──
+window.loginGoogle = async function() {
+  const face = document.getElementById('flipCard').classList.contains('flipped') ? 'back' : 'front';
+  setStatus(T('connectingGoogle'), face);
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch(e) {
+    setStatus(friendlyError(e), face);
+  }
+};
+
+window.loginFacebook = async function() {
+  const face = document.getElementById('flipCard').classList.contains('flipped') ? 'back' : 'front';
+  setStatus(T('connectingFacebook'), face);
+  try {
+    await signInWithPopup(auth, new FacebookAuthProvider());
+  } catch(e) {
+    setStatus(friendlyError(e), face);
+  }
+};
+
+// Play Ігри = Google акаунт (окремого веб-провайдера Play Games у Firebase немає,
+// справжня Play Games авторизація можлива лише з нативного Android SDK).
+window.loginPlayGames = async function() {
+  const face = document.getElementById('flipCard').classList.contains('flipped') ? 'back' : 'front';
+  setStatus(T('connectingPlayGames'), face);
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch(e) {
+    setStatus(friendlyError(e), face);
+  }
+};
+
+window.flip = function(toBack) {
+  document.getElementById('flipCard').classList.toggle('flipped', toBack);
+  setStatus('', 'front'); setStatus('', 'back');
+};
 
 // ── i18n ──────────────────────────────────────────────────────────
 const TRANSLATIONS = {
   uk: {
     tagline: 'Музика на стрімі через Twitch Channel Points',
-    btnGoogle: 'Увійти через Google',
+    loginTitle: 'З поверненням', loginSub: 'Введи пошту та пароль',
+    emailPlaceholder: 'Email', passwordPlaceholder: 'Пароль',
+    forgotLink: 'Забув(ла) пароль?', loginSubmit: 'Увійти',
+    dividerOr: 'або',
+    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Ігри',
+    toRegister: 'Немає акаунта? <b>Зареєструватися</b>',
+    regTitle: 'Створити акаунт', regSub: 'Приєднуйся до StreamDJ',
+    namePlaceholder: "Ім'я", passwordHintPlaceholder: 'Пароль (мін. 6 символів)',
+    regSubmit: 'Зареєструватися',
+    toLogin: 'Вже є акаунт? <b>Увійти</b>',
     hint: 'Twitch підключається <span>всередині панелі</span> після входу',
-    f0: 'Один акаунт на всіх пристроях',
-    f1: 'Черга треків через Twitch Channel Points',
-    f2: 'DJ панель з повним керуванням',
-    f3: 'Кастомний віджет для OBS',
-    f4: 'Налаштування вигляду',
-    connecting: 'Підключення...',
-    error: 'Помилка',
-    tryAgain: 'спробуй ще раз',
+    connectingEmail: 'Вхід...', connectingGoogle: 'Підключення через Google...',
+    connectingFacebook: 'Підключення через Facebook...', connectingPlayGames: 'Підключення через Play Ігри...',
+    resetSent: 'Лист для скидання пароля надіслано на пошту',
+    error: 'Помилка', tryAgain: 'спробуй ще раз',
+    errInvalidEmail: 'Некоректна email адреса',
+    errUserNotFound: 'Акаунт з такою поштою не знайдено',
+    errWrongPassword: 'Невірний пароль',
+    errEmailInUse: 'Ця пошта вже зареєстрована',
+    errWeakPassword: 'Пароль має містити мінімум 6 символів',
+    errTooMany: 'Забагато спроб. Спробуй пізніше',
+    errMissingFields: "Заповни пошту та пароль",
+    errEnterEmailFirst: 'Спочатку введи email',
   },
   en: {
     tagline: 'Stream music via Twitch Channel Points',
-    btnGoogle: 'Sign in with Google',
+    loginTitle: 'Welcome back', loginSub: 'Enter your email and password',
+    emailPlaceholder: 'Email', passwordPlaceholder: 'Password',
+    forgotLink: 'Forgot password?', loginSubmit: 'Log in',
+    dividerOr: 'or',
+    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Games',
+    toRegister: "Don't have an account? <b>Sign up</b>",
+    regTitle: 'Create account', regSub: 'Join StreamDJ',
+    namePlaceholder: 'Name', passwordHintPlaceholder: 'Password (min. 6 characters)',
+    regSubmit: 'Sign up',
+    toLogin: 'Already have an account? <b>Log in</b>',
     hint: 'Twitch is connected <span>inside the panel</span> after login',
-    f0: 'One account across all devices',
-    f1: 'Song queue via Twitch Channel Points',
-    f2: 'Full-featured DJ control panel',
-    f3: 'Custom OBS widget',
-    f4: 'Appearance customization',
-    connecting: 'Connecting...',
-    error: 'Error',
-    tryAgain: 'try again',
+    connectingEmail: 'Signing in...', connectingGoogle: 'Connecting via Google...',
+    connectingFacebook: 'Connecting via Facebook...', connectingPlayGames: 'Connecting via Play Games...',
+    resetSent: 'Password reset email sent',
+    error: 'Error', tryAgain: 'try again',
+    errInvalidEmail: 'Invalid email address',
+    errUserNotFound: 'No account found with this email',
+    errWrongPassword: 'Incorrect password',
+    errEmailInUse: 'This email is already registered',
+    errWeakPassword: 'Password must be at least 6 characters',
+    errTooMany: 'Too many attempts. Try again later',
+    errMissingFields: 'Enter your email and password',
+    errEnterEmailFirst: 'Enter your email first',
   },
   ru: {
     tagline: 'Музыка на стриме через Twitch Channel Points',
-    btnGoogle: 'Войти через Google',
+    loginTitle: 'С возвращением', loginSub: 'Введи почту и пароль',
+    emailPlaceholder: 'Email', passwordPlaceholder: 'Пароль',
+    forgotLink: 'Забыл(а) пароль?', loginSubmit: 'Войти',
+    dividerOr: 'или',
+    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Игры',
+    toRegister: 'Нет аккаунта? <b>Зарегистрироваться</b>',
+    regTitle: 'Создать аккаунт', regSub: 'Присоединяйся к StreamDJ',
+    namePlaceholder: 'Имя', passwordHintPlaceholder: 'Пароль (мин. 6 символов)',
+    regSubmit: 'Зарегистрироваться',
+    toLogin: 'Уже есть аккаунт? <b>Войти</b>',
     hint: 'Twitch подключается <span>внутри панели</span> после входа',
-    f0: 'Один аккаунт на всех устройствах',
-    f1: 'Очередь треков через Twitch Channel Points',
-    f2: 'DJ панель с полным управлением',
-    f3: 'Кастомный виджет для OBS',
-    f4: 'Настройка внешнего вида',
-    connecting: 'Подключение...',
-    error: 'Ошибка',
-    tryAgain: 'попробуй ещё раз',
+    connectingEmail: 'Вход...', connectingGoogle: 'Подключение через Google...',
+    connectingFacebook: 'Подключение через Facebook...', connectingPlayGames: 'Подключение через Play Игры...',
+    resetSent: 'Письмо для сброса пароля отправлено на почту',
+    error: 'Ошибка', tryAgain: 'попробуй ещё раз',
+    errInvalidEmail: 'Некорректный email адрес',
+    errUserNotFound: 'Аккаунт с такой почтой не найден',
+    errWrongPassword: 'Неверный пароль',
+    errEmailInUse: 'Эта почта уже зарегистрирована',
+    errWeakPassword: 'Пароль должен содержать минимум 6 символов',
+    errTooMany: 'Слишком много попыток. Попробуй позже',
+    errMissingFields: 'Заполни почту и пароль',
+    errEnterEmailFirst: 'Сначала введи email',
   }
 };
 
@@ -196,11 +516,28 @@ function applyLang() {
   document.querySelectorAll('.lang-btn')[map[currentLang]]?.classList.add('active');
 
   document.getElementById('tagline').textContent = T('tagline');
-  document.getElementById('btn-google-text').textContent = T('btnGoogle');
+  document.getElementById('loginTitle').textContent = T('loginTitle');
+  document.getElementById('loginSub').textContent = T('loginSub');
+  document.getElementById('loginEmail').placeholder = T('emailPlaceholder');
+  document.getElementById('loginPassword').placeholder = T('passwordPlaceholder');
+  document.getElementById('forgotLink').textContent = T('forgotLink');
+  document.getElementById('loginSubmitText').textContent = T('loginSubmit');
+  document.getElementById('dividerOr1').textContent = T('dividerOr');
+  document.getElementById('dividerOr2').textContent = T('dividerOr');
+  document.getElementById('toRegisterText').innerHTML = T('toRegister');
+
+  document.getElementById('regTitle').textContent = T('regTitle');
+  document.getElementById('regSub').textContent = T('regSub');
+  document.getElementById('regName').placeholder = T('namePlaceholder');
+  document.getElementById('regEmail').placeholder = T('emailPlaceholder');
+  document.getElementById('regPassword').placeholder = T('passwordHintPlaceholder');
+  document.getElementById('regSubmitText').textContent = T('regSubmit');
+  document.getElementById('toLoginText').innerHTML = T('toLogin');
+
   document.getElementById('hint').innerHTML = T('hint');
 
   document.querySelectorAll('.i18n[data-key]').forEach(el => {
-    el.innerHTML = T(el.getAttribute('data-key'));
+    el.textContent = T(el.getAttribute('data-key'));
   });
 
   const titles = {
