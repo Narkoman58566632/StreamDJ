@@ -33,10 +33,13 @@ body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur
 body::before{width:420px;height:420px;top:-140px;right:-100px;background:var(--glow1);}
 body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--glow2);}
 #app,.loading-screen,.modal-bg{position:relative;z-index:1;}
-.tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;overflow-x:auto;}
-.tab{padding:14px 18px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.tab-bar{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;overflow-x:auto;overflow-y:hidden;}
+.tab{position:relative;z-index:2;display:flex;align-items:center;gap:6px;padding:14px 18px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap;transition:color 0.35s;}
 .tab:hover{color:var(--text);}
-.tab.active{color:var(--text3);border-bottom:2px solid transparent;border-image:var(--accent-grad) 1;}
+.tab.active{color:var(--text3);}
+.tab-icon{font-size:14px;line-height:1;}
+.tab-label{line-height:1;}
+.tab-indicator{position:absolute;left:0;top:0;z-index:1;background:var(--accent-grad);border-radius:30px;pointer-events:none;transition:transform 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),width 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),height 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);box-shadow:0 4px 14px rgba(139,92,246,0.35);}
 .tab-content{display:none;padding:20px 16px;}
 .tab-content.active{display:block;}
 .page-header{padding:16px 16px 0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
@@ -110,7 +113,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .settings-reset{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;margin-top:16px;margin-left:8px;transition:all 0.2s;}
 .settings-reset:hover{color:var(--text);border-color:var(--text2);}
 .num-input{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text3);font-size:13px;width:80px;outline:none;}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;}
 .modal-bg.open{display:flex;}
 .modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:420px;width:90%;}
 .modal h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--accent);margin-bottom:12px;}
@@ -178,9 +181,23 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
   .header-left h1{font-size:15px;}
   .header-right{gap:6px;}
   .lang-select,.obs-link-btn,.logout-btn{padding:8px 10px;font-size:11px;}
-  .tab-bar{padding:0 8px;}
-  .tab{padding:13px 14px;font-size:11.5px;}
-  .tab-content{padding:16px 12px;}
+  .tab-bar{
+    position:fixed;top:50%;right:10px;left:auto;bottom:auto;
+    transform:translateY(-50%);
+    flex-direction:column;
+    width:auto;height:auto;
+    padding:8px;gap:2px;
+    border:1px solid var(--border2);
+    border-radius:30px;
+    background:var(--bg2);
+    box-shadow:0 8px 28px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.02) inset;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    z-index:200;overflow:visible;
+  }
+  .tab{padding:11px;font-size:0;justify-content:center;gap:0;border-radius:50%;width:44px;height:44px;}
+  .tab-icon{font-size:19px;}
+  .tab-label{display:none;}
+  .tab-content{padding:16px 76px 16px 12px;}
   .section{padding:16px 14px;border-radius:14px;margin-bottom:12px;}
   .music-controls{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;}
   .music-btn{padding:12px 8px;font-size:10.5px;}
@@ -202,7 +219,6 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 @media(max-width:380px){
   .header-left h1{font-size:14px;}
   .header-left .subtitle{font-size:10px;}
-  .tab{padding:12px 10px;font-size:11px;}
   .music-controls{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));}
   .theme-presets .preset-btn{width:28px;height:28px;}
 }
@@ -253,13 +269,14 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
     </div>
   </div>
 
-  <div class="tab-bar">
-    <div class="tab active" onclick="switchTab('queue')" id="t-queue">🎵 Черга</div>
-    <div class="tab" onclick="switchTab('playlists')" id="t-playlists">📂 Плейлисти</div>
-    <div class="tab" onclick="switchTab('twitch')" id="t-twitch">🟣 Twitch</div>
-    <div class="tab" onclick="switchTab('bans')" id="t-bans">🚫 Бан-лист</div>
-    <div class="tab" onclick="switchTab('settings')" id="t-settings">⚙️ Вигляд</div>
-    <div class="tab" onclick="switchTab('stats')" id="t-stats">📊 Статистика</div>
+  <div class="tab-bar" id="tab-bar">
+    <div class="tab-indicator" id="tab-indicator"></div>
+    <div class="tab active" onclick="switchTab('queue')" id="t-queue"><span class="tab-icon">🎵</span><span class="tab-label">Черга</span></div>
+    <div class="tab" onclick="switchTab('playlists')" id="t-playlists"><span class="tab-icon">📂</span><span class="tab-label">Плейлисти</span></div>
+    <div class="tab" onclick="switchTab('twitch')" id="t-twitch"><span class="tab-icon">🟣</span><span class="tab-label">Twitch</span></div>
+    <div class="tab" onclick="switchTab('bans')" id="t-bans"><span class="tab-icon">🚫</span><span class="tab-label">Бан-лист</span></div>
+    <div class="tab" onclick="switchTab('settings')" id="t-settings"><span class="tab-icon">⚙️</span><span class="tab-label">Вигляд</span></div>
+    <div class="tab" onclick="switchTab('stats')" id="t-stats"><span class="tab-icon">📊</span><span class="tab-label">Статистика</span></div>
   </div>
 
   <div class="tab-content active" id="tab-queue">
@@ -625,10 +642,10 @@ function applyLocalization() {
   if(uid) document.getElementById('user-subtitle').textContent = userDisplayName + t.subtitle_suffix;
   document.getElementById('h-obs-btn').textContent = t.obs_btn;
   document.getElementById('h-logout-btn').textContent = t.logout;
-  document.getElementById('t-queue').textContent = t.tab_queue;
-  document.getElementById('t-playlists').textContent = t.tab_playlists;
-  document.getElementById('t-twitch').textContent = t.tab_twitch;
-  document.getElementById('t-settings').textContent = t.tab_settings;
+  setTabLabel('t-queue', t.tab_queue);
+  setTabLabel('t-playlists', t.tab_playlists);
+  setTabLabel('t-twitch', t.tab_twitch);
+  setTabLabel('t-settings', t.tab_settings);
   document.getElementById('s-playback').textContent = t.s_playback;
   document.getElementById('b-play').textContent = t.b_play;
   document.getElementById('b-pause').textContent = t.b_pause;
@@ -676,7 +693,7 @@ function applyLocalization() {
   document.getElementById('m-obs-copy').textContent = t.m_obs_copy;
   document.getElementById('m-obs-close').textContent = t.m_obs_close;
   document.getElementById('s-queue-title').textContent = t.s_queue_title;
-  document.getElementById('t-stats').textContent = t.tab_stats;
+  setTabLabel('t-stats', t.tab_stats);
   document.getElementById('s-stats-overview').textContent = t.s_stats_overview;
   document.getElementById('stat-total-label').textContent = t.stat_total_label;
   document.getElementById('stat-session-label').textContent = t.stat_session_label;
@@ -686,7 +703,7 @@ function applyLocalization() {
   document.getElementById('s-recent-history').textContent = t.s_recent_history;
   document.getElementById('b-clear-history').textContent = t.b_clear_history;
   document.getElementById('b-reset-obs').textContent = t.b_reset_obs;
-  document.getElementById('t-bans').textContent = t.tab_bans;
+  setTabLabel('t-bans', t.tab_bans);
   document.getElementById('s-ban-users').textContent = t.s_ban_users;
   document.getElementById('lbl-ban-users-desc').textContent = t.lbl_ban_users_desc;
   document.getElementById('ban-user-input').placeholder = t.ban_user_placeholder;
@@ -755,6 +772,7 @@ onAuthStateChanged(auth, async (user) => {
   document.getElementById('user-subtitle').textContent = userDisplayName + LANGUAGES[currentLang].subtitle_suffix;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  requestAnimationFrame(moveTabIndicator);
 
   initQueue();
   loadColors();
@@ -1329,12 +1347,40 @@ window.clearHistory=async function(){
   if(!confirm(LANGUAGES[currentLang].confirm_clear_history))return;
   await remove(historyRef());
 };
+function setTabLabel(id, str){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const sp = str.indexOf(' ');
+  const icon = sp>-1 ? str.slice(0, sp) : str;
+  const label = sp>-1 ? str.slice(sp+1) : '';
+  const iconEl = el.querySelector('.tab-icon');
+  const labelEl = el.querySelector('.tab-label');
+  if(iconEl) iconEl.textContent = icon;
+  if(labelEl) labelEl.textContent = label;
+}
+function moveTabIndicator(){
+  const bar = document.getElementById('tab-bar');
+  const indicator = document.getElementById('tab-indicator');
+  const active = bar && bar.querySelector('.tab.active');
+  if(!bar || !indicator || !active) return;
+  indicator.style.borderRadius = getComputedStyle(bar).flexDirection === 'column' ? '50%' : '30px';
+  const x = active.offsetLeft - bar.scrollLeft;
+  const y = active.offsetTop - bar.scrollTop;
+  indicator.style.width = active.offsetWidth + 'px';
+  indicator.style.height = active.offsetHeight + 'px';
+  indicator.style.transform = `translate(${x}px, ${y}px)`;
+}
 window.switchTab=function(name){
   const names=['queue','playlists','twitch','bans','settings','stats'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
+  moveTabIndicator();
 };
+window.addEventListener('resize', ()=>{ moveTabIndicator(); });
+document.getElementById('tab-bar')?.addEventListener('scroll', ()=>{ moveTabIndicator(); });
+window.addEventListener('load', ()=>{ requestAnimationFrame(moveTabIndicator); });
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>moveTabIndicator()); }
 
 // ── COLORS / THEMES ──
 const PRESETS={
