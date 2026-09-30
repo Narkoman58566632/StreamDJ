@@ -291,6 +291,14 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
       </div>
     </div>
     <div class="section">
+      <div class="section-title" id="s-manual">➕ додати трек вручну</div>
+      <div class="pl-add-row">
+        <input class="pl-url-input" id="manual-url" type="text" placeholder="Посилання на YouTube або Яндекс Музику...">
+        <button class="pl-add-btn" id="manual-add-btn" onclick="addManualTrack()">+ Додати</button>
+      </div>
+      <div class="pl-status" id="manual-status"></div>
+    </div>
+    <div class="section">
       <div class="section-title"><span id="s-queue-title">черга треків</span> <span class="badge" id="queue-badge">0</span></div>
       <div id="queue-list"><div class="empty">черга порожня</div></div>
     </div>
@@ -327,6 +335,9 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
         <div class="reward-label" id="lbl-reward-track-name">назва нагороди для треку (точна, як на Twitch)</div>
         <input class="reward-input" id="reward-name-input" type="text" placeholder="🎵 Замов трек" value="🎵 Замов трек" onchange="saveRewards()">
         <div class="reward-hint" id="lbl-reward-hint2">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
+        <div class="reward-hint" id="lbl-yandex-support" style="margin-top:10px;">🟡 Також приймаються посилання на Яндекс Музику (у тій самій нагороді).</div>
+        <div class="reward-label" id="lbl-yandex-duration" style="margin-top:10px;">тривалість Яндекс-треку за замовчуванням (сек)</div>
+        <input type="number" class="num-input" id="yandex-duration" value="240" min="30" max="1800" onchange="saveRewards()">
       </div>
       <div class="log-box" id="twitch-log"></div>
     </div>
@@ -526,7 +537,12 @@ const LANGUAGES = {
     ban_track_placeholder:"Посилання на YouTube відео або video ID...",ban_track_add:"🚫 Забанити",empty_banned_tracks:"немає забанених треків",
     ban_track_url_error:"❌ Не вдалось розпізнати посилання на відео.",ban_track_added:"✅ Трек забанено",
     confirm_unban_user:"Розбанити цього глядача?",confirm_unban_track:"Розбанити цей трек?",btn_unban:"Розбанити",
-    btn_ban_short:"🚫",banned_by_from:"забанено",queue_skip_banned:"⛔ Пропущено (глядач у бані)",track_skip_banned:"⛔ Пропущено (трек у бані)"
+    btn_ban_short:"🚫",banned_by_from:"забанено",queue_skip_banned:"⛔ Пропущено (глядач у бані)",track_skip_banned:"⛔ Пропущено (трек у бані)",
+    lbl_yandex_support:"🟡 Також приймаються посилання на Яндекс Музику (у тій самій нагороді).",
+    lbl_yandex_duration:"тривалість Яндекс-треку за замовчуванням (сек), якщо не вдалося отримати її з Яндекса",
+    log_yandex_added:"🟡 Яндекс трек додано",log_yandex_no_meta:"Не вдалося отримати назву з Яндекса — використовую стандартну",
+    s_manual:"➕ додати трек вручну",manual_placeholder:"Посилання на YouTube або Яндекс Музику...",manual_add:"+ Додати",
+    manual_error:"❌ Не вдалося розпізнати посилання",manual_ok:"✅ Додано в чергу"
   },
   ru: {
     loading:"Загрузка...",subtitle_suffix:" — управление музыкой",obs_btn:"🎬 OBS линк",logout:"Выйти",
@@ -567,7 +583,12 @@ const LANGUAGES = {
     ban_track_placeholder:"Ссылка на YouTube видео или video ID...",ban_track_add:"🚫 Забанить",empty_banned_tracks:"нет забаненных треков",
     ban_track_url_error:"❌ Не удалось распознать ссылку на видео.",ban_track_added:"✅ Трек забанен",
     confirm_unban_user:"Разбанить этого зрителя?",confirm_unban_track:"Разбанить этот трек?",btn_unban:"Разбанить",
-    btn_ban_short:"🚫",banned_by_from:"забанен",queue_skip_banned:"⛔ Пропущено (зритель забанен)",track_skip_banned:"⛔ Пропущено (трек забанен)"
+    btn_ban_short:"🚫",banned_by_from:"забанен",queue_skip_banned:"⛔ Пропущено (зритель забанен)",track_skip_banned:"⛔ Пропущено (трек забанен)",
+    lbl_yandex_support:"🟡 Также принимаются ссылки на Яндекс Музыку (в той же награде).",
+    lbl_yandex_duration:"длительность Яндекс-трека по умолчанию (сек), если не удалось получить её из Яндекса",
+    log_yandex_added:"🟡 Яндекс трек добавлен",log_yandex_no_meta:"Не удалось получить название из Яндекса — использую стандартное",
+    s_manual:"➕ добавить трек вручную",manual_placeholder:"Ссылка на YouTube или Яндекс Музыку...",manual_add:"+ Добавить",
+    manual_error:"❌ Не удалось распознать ссылку",manual_ok:"✅ Добавлено в очередь"
   },
   en: {
     loading:"Loading...",subtitle_suffix:" — music control",obs_btn:"🎬 OBS Link",logout:"Logout",
@@ -608,7 +629,12 @@ const LANGUAGES = {
     ban_track_placeholder:"YouTube video link or video ID...",ban_track_add:"🚫 Ban",empty_banned_tracks:"no banned tracks",
     ban_track_url_error:"❌ Could not recognize the video link.",ban_track_added:"✅ Track banned",
     confirm_unban_user:"Unban this viewer?",confirm_unban_track:"Unban this track?",btn_unban:"Unban",
-    btn_ban_short:"🚫",banned_by_from:"banned",queue_skip_banned:"⛔ Skipped (viewer banned)",track_skip_banned:"⛔ Skipped (track banned)"
+    btn_ban_short:"🚫",banned_by_from:"banned",queue_skip_banned:"⛔ Skipped (viewer banned)",track_skip_banned:"⛔ Skipped (track banned)",
+    lbl_yandex_support:"🟡 Yandex Music links are also accepted (in the same reward).",
+    lbl_yandex_duration:"default Yandex track duration (sec), used if it can't be fetched from Yandex",
+    log_yandex_added:"🟡 Yandex track added",log_yandex_no_meta:"Could not fetch the title from Yandex — using a default one",
+    s_manual:"➕ add a track manually",manual_placeholder:"YouTube or Yandex Music link...",manual_add:"+ Add",
+    manual_error:"❌ Could not recognize the link",manual_ok:"✅ Added to the queue"
   }
 };
 
@@ -693,6 +719,11 @@ function applyLocalization() {
   document.getElementById('m-obs-copy').textContent = t.m_obs_copy;
   document.getElementById('m-obs-close').textContent = t.m_obs_close;
   document.getElementById('s-queue-title').textContent = t.s_queue_title;
+  document.getElementById('lbl-yandex-support').textContent = t.lbl_yandex_support;
+  document.getElementById('lbl-yandex-duration').textContent = t.lbl_yandex_duration;
+  document.getElementById('s-manual').textContent = t.s_manual;
+  document.getElementById('manual-url').placeholder = t.manual_placeholder;
+  document.getElementById('manual-add-btn').textContent = t.manual_add;
   setTabLabel('t-stats', t.tab_stats);
   document.getElementById('s-stats-overview').textContent = t.s_stats_overview;
   document.getElementById('stat-total-label').textContent = t.stat_total_label;
@@ -813,6 +844,7 @@ function initRewards() {
     if (cfg.trackReward !== undefined) document.getElementById('reward-name-input').value = cfg.trackReward;
     if (cfg.playlistReward !== undefined) document.getElementById('playlist-reward-name').value = cfg.playlistReward;
     if (cfg.maxPlTracks !== undefined) document.getElementById('max-pl-tracks').value = cfg.maxPlTracks;
+    if (cfg.yandexDuration !== undefined) document.getElementById('yandex-duration').value = cfg.yandexDuration;
   });
 }
 window.saveRewards = async function() {
@@ -820,7 +852,8 @@ window.saveRewards = async function() {
   const trackReward = document.getElementById('reward-name-input').value.trim();
   const playlistReward = document.getElementById('playlist-reward-name').value.trim();
   const maxPlTracks = parseInt(document.getElementById('max-pl-tracks').value) || 10;
-  await set(rewardCfgRef(), { trackReward, playlistReward, maxPlTracks });
+  const yandexDuration = parseInt(document.getElementById('yandex-duration').value) || 240;
+  await set(rewardCfgRef(), { trackReward, playlistReward, maxPlTracks, yandexDuration });
 };
 
 // ── BANS ──
@@ -1182,6 +1215,8 @@ async function handleRedemption(ev){
     return;
   }
   if (trackReward && rewardName.toLowerCase() !== trackReward.toLowerCase()) { log(t.log_skip_reward, 'info'); return; }
+  const ya = extractYandexTrack(input);
+  if (ya) { await enqueueYandex(ya, userName, 'twitch_points'); return; }
   const vid = extractVideoId(input);
   if (!vid) { log(`${t.log_not_url}${userName}`, 'err'); return; }
 
@@ -1200,6 +1235,70 @@ async function handleRedemption(ev){
     await push(qRef(), {id:vid, title, channel, from:userName, ts:Date.now(), status:'approved', source:'twitch_points'});
   } catch(e) { log(t.log_firebase_err + e.message, 'err'); }
 }
+
+// ── YANDEX MUSIC ──
+function extractYandexTrack(text){
+  const m = (text || '').match(/music\.yandex\.(?:ru|com|by|kz|uz|ua)\/(?:album\/(\d+)\/)?track\/(\d+)/i);
+  return m ? { albumId: m[1] || '', trackId: m[2] } : null;
+}
+async function fetchYandexMeta(trackId, albumId){
+  // Може не спрацювати через CORS — тоді повертаємо null і використовуємо назву за замовчуванням
+  try {
+    const key = albumId ? `${trackId}:${albumId}` : trackId;
+    const r = await fetch(`https://music.yandex.ru/handlers/track.jsx?track=${key}`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    const tr = d.track || d;
+    if (!tr || !tr.title) return null;
+    const artists = (tr.artists || []).map(a => a.name).join(', ');
+    return { title: artists ? `${artists} — ${tr.title}` : tr.title, duration: tr.durationMs ? Math.round(tr.durationMs / 1000) : null };
+  } catch (e) { return null; }
+}
+async function enqueueYandex(ya, userName, source){
+  const t = LANGUAGES[currentLang];
+  const banKey = 'ya_' + ya.trackId;
+  if (isTrackBanned(banKey)) { log(`${t.track_skip_banned}: ${banKey}`, 'err'); return false; }
+  const meta = await fetchYandexMeta(ya.trackId, ya.albumId);
+  if (!meta) log(t.log_yandex_no_meta, 'info');
+  const defDur = parseInt(document.getElementById('yandex-duration').value) || 240;
+  try {
+    await push(qRef(), {
+      id: banKey, provider: 'yandex', yaTrack: ya.trackId, yaAlbum: ya.albumId,
+      title: meta?.title || `Yandex Music #${ya.trackId}`, channel: '',
+      from: userName, ts: Date.now(), status: 'approved', source: source,
+      duration: meta?.duration || defDur
+    });
+    log(t.log_yandex_added, 'ok');
+    return true;
+  } catch (e) { log(t.log_firebase_err + e.message, 'err'); return false; }
+}
+window.addManualTrack = async function(){
+  const t = LANGUAGES[currentLang];
+  if (!uid) return;
+  const input = document.getElementById('manual-url');
+  const status = document.getElementById('manual-status');
+  const raw = input.value.trim();
+  if (!raw) return;
+  const setSt = (msg, err) => { status.textContent = msg; status.style.color = err ? '#e08080' : 'var(--green)'; };
+  const ya = extractYandexTrack(raw);
+  if (ya) {
+    const ok = await enqueueYandex(ya, userDisplayName || 'DJ', 'manual');
+    if (ok) { input.value = ''; setSt(t.manual_ok, false); } else setSt(t.manual_error, true);
+    return;
+  }
+  const vid = extractVideoId(raw);
+  if (!vid) { setSt(t.manual_error, true); return; }
+  if (isTrackBanned(vid)) { setSt(t.track_skip_banned, true); return; }
+  let title = 'YouTube track', channel = '';
+  try {
+    const r = await fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${vid}&format=json`);
+    if (r.ok) { const d = await r.json(); title = d.title; channel = d.author_name; }
+  } catch {}
+  try {
+    await push(qRef(), { id: vid, title, channel, from: userDisplayName || 'DJ', ts: Date.now(), status: 'approved', source: 'manual' });
+    input.value = ''; setSt(t.manual_ok, false);
+  } catch (e) { setSt(t.log_firebase_err + e.message, true); }
+};
 
 function extractVideoId(text){const m=text.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
 
@@ -1268,7 +1367,7 @@ function render(){
     <div class="queue-item">
       ${item.status==='playing'?`<span class="now-pill">${t.playing_now}</span>`:`<span class="q-num">${i}</span>`}
       <div class="q-info">
-        <div class="q-name">${item.title}${item.source==='twitch_points'?'<span class="twitch-pill">🟣 points</span>':''}${item.source==='twitch_playlist'?'<span class="twitch-pill">🟣 playlist</span>':''}${item.source==='playlist'?'<span class="playlist-pill">📂 auto</span>':''}</div>
+        <div class="q-name">${item.title}${item.source==='twitch_points'?'<span class="twitch-pill">🟣 points</span>':''}${item.source==='twitch_playlist'?'<span class="twitch-pill">🟣 playlist</span>':''}${item.source==='playlist'?'<span class="playlist-pill">📂 auto</span>':''}${item.provider==='yandex'?'<span class="twitch-pill" style="border-color:#e0b000;color:#e0b000;">🟡 Yandex</span>':''}</div>
         <div class="q-from">${t.from_user} ${item.from}</div>
       </div>
       <button class="btn-ban" title="${t.ban_user_add}" onclick="banUserByName('${(item.from||'').replace(/'/g,"\\'")}');banTrackById('${item.id||''}','${(item.title||'').replace(/'/g,"\\'")}');reject('${item.key}')">${t.btn_ban_short}</button>

@@ -33,6 +33,8 @@ body{background:transparent;font-family:'Unbounded',sans-serif;padding:16px;over
 .track-text.short{animation:none;}
 .from-text{font-size:10px;color:var(--w-from);}
 .q-pill{font-size:10px;color:var(--w-pill);background:rgba(255,255,255,0.06);border:1px solid var(--w-border);border-radius:99px;padding:2px 8px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+#ya-frame{position:fixed;left:0;bottom:0;width:340px;height:130px;border:0;opacity:0.001;pointer-events:none;}
+body.debug #ya-frame{opacity:1;pointer-events:auto;z-index:50;background:#222;}
 .error{color:#ff6060;font-size:12px;font-family:'Unbounded',sans-serif;padding:16px;}
 </style>
 </head>
@@ -149,6 +151,7 @@ onValue(themeRef, (snap) => {
 
 // ── PLAYER ────────────────────────────────────────────────────────
 let player = null, currentKey = null, hideTimer = null;
+let currentItem = null, currentProvider = 'youtube', yaTimer = null;
 const tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(tag);
@@ -157,7 +160,7 @@ window.onYouTubeIframeAPIReady = function() {
   player = new YT.Player('yt-player', {
     height:'1', width:'1',
     playerVars:{autoplay:1},
-    events:{ onStateChange(e){ if (e.data === YT.PlayerState.ENDED) markDoneAndNext(); } }
+    events:{ onReady(){ tryPlay(); }, onStateChange(e){ if (e.data === YT.PlayerState.ENDED) markDoneAndNext(); } }
   });
 };
 const pd = document.createElement('div');
@@ -165,10 +168,47 @@ pd.id = 'yt-player';
 pd.style.cssText = 'position:fixed;bottom:-10px;left:-10px;width:1px;height:1px;';
 document.body.appendChild(pd);
 
+// ── YANDEX MUSIC (iframe player, no JS API -> end of track by timer) ──
+// Якщо iframe не завантажується, спробуй формат: https://music.yandex.ru/iframe/#track/ID/ALBUM
+const YA_IFRAME = (track, album) => `https://music.yandex.ru/iframe/track/${track}${album ? '/' + album : ''}`;
+const yaFrame = document.createElement('iframe');
+yaFrame.id = 'ya-frame';
+yaFrame.setAttribute('allow', 'autoplay *; encrypted-media *');
+document.body.appendChild(yaFrame);
+// ?debug=1 у посиланні OBS — показує iframe Яндекса і дає з ним взаємодіяти (логін, перевірка)
+if (new URLSearchParams(window.location.search).get('debug') === '1') document.body.classList.add('debug');
+
+function stopYandex() {
+  clearTimeout(yaTimer); yaTimer = null;
+  yaFrame.src = 'about:blank';
+}
+function startYandex(item) {
+  stopYandex();
+  try { player?.stopVideo?.(); } catch (e) {}
+  yaFrame.src = YA_IFRAME(item.yaTrack, item.yaAlbum);
+  const dur = Math.max(10, Number(item.duration) || 240);
+  yaTimer = setTimeout(markDoneAndNext, (dur + 2) * 1000);
+}
+// якщо поточний трек зник із черги (видалили / очистили) — зупиняємо звук
+function cleanupIfGone() {
+  if (currentKey && !queue.find(t => t.key === currentKey)) {
+    currentKey = null; currentItem = null; currentProvider = 'youtube';
+    stopYandex();
+    try { player?.stopVideo?.(); } catch (e) {}
+  }
+}
+
 // ── CONTROL ───────────────────────────────────────────────────────
 onValue(controlRef, (snap) => {
   const data = snap.val();
-  if (!data || !player) return;
+  if (!data) return;
+  if (currentProvider === 'yandex') {
+    // iframe Яндекса не має API: працюють тільки «пропустити» та «спочатку»
+    if (data.action === 'skip') markDoneAndNext();
+    if (data.action === 'replay' && currentItem) startYandex(currentItem);
+    return;
+  }
+  if (!player) return;
   if (data.action === 'pause') player.pauseVideo();
   if (data.action === 'play') player.playVideo();
   if (data.action === 'skip') markDoneAndNext();
@@ -179,20 +219,30 @@ onValue(controlRef, (snap) => {
 let queue = [];
 onValue(queueRef, (snapshot) => {
   const data = snapshot.val();
-  if (!data) { queue = []; updateUI(); return; }
+  if (!data) { queue = []; cleanupIfGone(); updateUI(); return; }
   queue = Object.entries(data)
     .map(([k,v]) => ({...v, key:k}))
     .filter(v => v.status === 'approved' || v.status === 'playing')
     .sort((a,b) => a.ts - b.ts);
+  cleanupIfGone();
   updateUI();
   tryPlay();
 });
 
 function tryPlay() {
-  if (!player?.loadVideoById) return;
   const playing = queue.find(t => t.status === 'playing');
   if (playing) {
-    if (playing.key !== currentKey) { currentKey = playing.key; player.loadVideoById(playing.id); }
+    if (playing.key !== currentKey) {
+      if (playing.provider === 'yandex') {
+        currentKey = playing.key; currentProvider = 'yandex'; currentItem = playing;
+        startYandex(playing);
+      } else {
+        if (!player?.loadVideoById) return;
+        stopYandex();
+        currentKey = playing.key; currentProvider = 'youtube'; currentItem = playing;
+        player.loadVideoById(playing.id);
+      }
+    }
     return;
   }
   const next = queue.find(t => t.status === 'approved');
@@ -207,7 +257,8 @@ function markDoneAndNext() {
   if (!currentKey) return;
   const keyToRemove = currentKey;
   const played = queue.find(t => t.key === keyToRemove);
-  currentKey = null;
+  currentKey = null; currentItem = null; currentProvider = 'youtube';
+  stopYandex();
   if (played) {
     const hRef = ref(db, `users/${uid}/history`);
     push(hRef, {
