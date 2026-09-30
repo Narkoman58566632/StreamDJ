@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StreamDJ — панель</title>
+<script>(function(){try{var m=localStorage.getItem('streamdj_theme')==='light'?'light':'dark';var r=document.documentElement;r.dataset.mode=m;r.style.colorScheme=m;var v=JSON.parse(localStorage.getItem('streamdj_vars')||'null');if(v){for(var k in v){r.style.setProperty(k,v[k]);}}}catch(e){}})();</script>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);}
 body{background:var(--bg);min-height:100vh;font-family:'Plus Jakarta Sans',sans-serif;padding:0;color:var(--text);overflow-x:hidden;transition:background 0.25s,color 0.25s;}
 :root{
 --bg:#0a0a0f;--bg2:#15151d;--bg3:#1c1c27;
@@ -18,31 +20,22 @@ body{background:var(--bg);min-height:100vh;font-family:'Plus Jakarta Sans',sans-
 --green:#4ade80;--green-bg:rgba(74,222,128,0.12);--green-border:rgba(74,222,128,0.35);
 --red-btn:rgba(255,107,122,0.12);--red-btn-text:#ff6b7a;--twitch:#6441a5;
 --glow1:rgba(139,92,246,0.28);--glow2:rgba(56,189,248,0.20);
-}
-body.theme-light{
---bg:#f7f5f0;--bg2:#ffffff;--bg3:#ffffff;
---border:#e5e0d4;--border2:#d8d2c2;
---accent:#7c3aed;--accent2:#0284c7;
---accent-grad:linear-gradient(135deg,#7c3aed,#0284c7);
---text:#211e17;--text2:#8a8478;--text3:#1a1814;
---green:#1f9d55;--green-bg:rgba(31,157,85,0.1);--green-border:rgba(31,157,85,0.3);
---red-btn:rgba(220,38,38,0.08);--red-btn-text:#dc2626;--twitch:#6441a5;
---glow1:rgba(124,58,237,0.10);--glow2:rgba(2,132,199,0.08);
+--accent-ink:#0b0b12;--accent-shadow:rgba(139,92,246,0.35);--shadow:0 8px 24px rgba(0,0,0,0.35);--twitch-text:#b09fe0;color-scheme:dark;
 }
 body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(60px);pointer-events:none;z-index:0;}
 body::before{width:420px;height:420px;top:-140px;right:-100px;background:var(--glow1);}
 body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--glow2);}
 #app,.loading-screen,.modal-bg{position:relative;z-index:1;}
-.tab-bar{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;overflow-x:auto;overflow-y:hidden;}
+.tab-bar{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 clamp(16px,3vw,48px);position:sticky;top:0;z-index:100;overflow-x:auto;overflow-y:hidden;}
 .tab{position:relative;z-index:2;display:flex;align-items:center;gap:6px;padding:14px 18px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap;transition:color 0.35s;}
 .tab:hover{color:var(--text);}
-.tab.active{color:var(--text3);}
+.tab.active{color:var(--accent-ink);}
 .tab-icon{font-size:14px;line-height:1;}
 .tab-label{line-height:1;}
-.tab-indicator{position:absolute;left:0;top:0;z-index:1;background:var(--accent-grad);border-radius:23px;pointer-events:none;transition:transform 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),width 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),height 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);box-shadow:0 4px 14px rgba(139,92,246,0.35);}
-.tab-content{display:none;padding:20px 16px;}
+.tab-indicator{position:absolute;left:0;top:0;z-index:1;background:var(--accent-grad);border-radius:23px;pointer-events:none;transition:transform 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),width 0.5s cubic-bezier(0.68,-0.55,0.265,1.55),height 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);box-shadow:0 4px 14px var(--accent-shadow);}
+.tab-content{display:none;padding:24px clamp(16px,3vw,48px);}
 .tab-content.active{display:block;}
-.page-header{padding:16px 16px 0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.page-header{padding:18px clamp(16px,3vw,48px) 14px;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .header-left h1{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:17px;background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:2px;}
 .header-left .subtitle{font-size:11px;color:var(--text2);}
 .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -53,7 +46,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .obs-link-btn:hover{border-color:var(--accent);}
 .logout-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
 .logout-btn:hover{color:var(--text);}
-.section{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow);}
 .section-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .badge{background:var(--accent2);color:var(--bg);border-radius:99px;font-size:10px;padding:2px 8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:bold;}
 .twitch-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -79,7 +72,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .q-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .q-from{font-size:11px;color:var(--text2);margin-top:2px;}
 .now-pill{background:var(--red-btn);border:1px solid var(--red-btn-text);border-radius:99px;font-size:9px;color:var(--red-btn-text);padding:3px 9px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;}
-.twitch-pill{background:rgba(100,65,165,0.2);border:1px solid var(--twitch);border-radius:99px;font-size:9px;color:#b09fe0;padding:3px 9px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;margin-left:4px;}
+.twitch-pill{background:rgba(100,65,165,0.2);border:1px solid var(--twitch);border-radius:99px;font-size:9px;color:var(--twitch-text);padding:3px 9px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;margin-left:4px;}
 .playlist-pill{background:var(--green-bg);border:1px solid var(--green-border);border-radius:99px;font-size:9px;color:var(--green);padding:3px 9px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;margin-left:4px;}
 .btn-del{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;flex-shrink:0;}
 .btn-del:hover{color:var(--red-btn-text);border-color:var(--red-btn-text);}
@@ -97,7 +90,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .log-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;max-height:130px;overflow-y:auto;margin-top:10px;}
 .log-box .log-ok{color:var(--green);}
 .log-box .log-err{color:var(--red-btn-text);}
-.log-box .log-info{color:var(--twitch);}
+.log-box .log-info{color:var(--twitch-text);}
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:480px){.settings-grid{grid-template-columns:1fr;}}
 .setting-row{display:flex;flex-direction:column;gap:6px;}
@@ -108,7 +101,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .theme-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .preset-btn{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;flex-shrink:0;}
 .preset-btn:hover,.preset-btn.active{border-color:var(--text);transform:scale(1.1);}
-.settings-save{background:var(--accent-grad);color:#fff;font-weight:bold;border:none;border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;margin-top:16px;transition:opacity 0.2s,transform 0.2s;box-shadow:0 6px 18px rgba(139,92,246,0.35);}
+.settings-save{background:var(--accent-grad);color:var(--accent-ink);font-weight:bold;border:none;border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;margin-top:16px;transition:opacity 0.2s,transform 0.2s;box-shadow:0 6px 18px var(--accent-shadow);}
 .settings-save:hover{opacity:0.92;transform:translateY(-1px);}
 .settings-reset{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:10px;padding:12px 24px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;margin-top:16px;margin-left:8px;transition:all 0.2s;}
 .settings-reset:hover{color:var(--text);border-color:var(--text2);}
@@ -120,18 +113,19 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .modal p{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;}
 .obs-url-box{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;word-break:break-all;margin-bottom:12px;}
 .modal-btns{display:flex;gap:8px;}
-.modal-copy{background:var(--accent-grad);color:#fff;font-weight:bold;border:none;border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 14px rgba(139,92,246,0.3);}
+.modal-copy{background:var(--accent-grad);color:var(--accent-ink);font-weight:bold;border:none;border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 14px var(--accent-shadow);}
 .modal-close{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer;}
 .loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;}
 .loading-screen .logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:24px;color:var(--text3);}
 .loading-screen .logo span{background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .loading-screen p{font-size:12px;color:var(--text2);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+html.theme-anim *:not(.tab-indicator),html.theme-anim body::before,html.theme-anim body::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease !important;}
 .pl-add-row{display:flex;gap:8px;margin-bottom:12px;}
 .pl-url-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text3);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;}
 .pl-url-input:focus{border-color:var(--green-border);}
 .pl-add-btn{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;}
-.pl-add-btn:hover{background:#245024;}
+.pl-add-btn:hover{background:var(--green-border);}
 .pl-add-btn:disabled{opacity:0.5;cursor:not-allowed;}
 .pl-item{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
 .pl-thumb{width:48px;height:36px;border-radius:6px;background:var(--border);overflow:hidden;flex-shrink:0;}
@@ -141,7 +135,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .pl-meta{font-size:11px;color:var(--text2);}
 .pl-actions{display:flex;gap:6px;flex-shrink:0;}
 .pl-play-btn{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
-.pl-play-btn:hover{background:#245024;}
+.pl-play-btn:hover{background:var(--green-border);}
 .pl-del-btn{background:var(--bg2);color:var(--text2);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer;}
 .pl-del-btn:hover{color:var(--red-btn-text);border-color:var(--red-btn-text);}
 .pl-status{font-size:11px;color:var(--text2);margin-top:8px;min-height:16px;}
@@ -166,7 +160,12 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 .ban-meta{font-size:11px;color:var(--text2);}
 
 /* ── Центрування контенту на великих екранах (ПК) ── */
-#app{max-width:960px;margin:0 auto;}
+#app{max-width:none;width:100%;margin:0;}
+.span-all{grid-column:1/-1;}
+@media(min-width:1100px){
+  .tab-content.active{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;}
+  .tab-content.active>.section{margin-bottom:0;}
+}
 .tab-bar{-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
 
 /* ── Планшети ── */
@@ -233,7 +232,6 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
 </style>
 </head>
 <body>
-<script>(function(){try{if(localStorage.getItem('streamdj_theme')==='light'){document.body.classList.add('theme-light');}}catch(e){}})();</script>
 <div class="loading-screen" id="loading">
   <div class="logo">Stream<span>DJ</span></div>
   <p id="load-text">Завантаження...</p>
@@ -298,14 +296,14 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
       </div>
       <div class="pl-status" id="manual-status"></div>
     </div>
-    <div class="section">
+    <div class="section span-all">
       <div class="section-title"><span id="s-queue-title">черга треків</span> <span class="badge" id="queue-badge">0</span></div>
       <div id="queue-list"><div class="empty">черга порожня</div></div>
     </div>
   </div>
 
   <div class="tab-content" id="tab-playlists">
-    <div class="section">
+    <div class="section span-all">
       <div class="section-title" id="s-my-playlists">📂 мої плейлисти</div>
       <div class="pl-mode-row">
         <span class="pl-fallback-label" id="lbl-fallback">Коли черга порожня:</span>
@@ -428,7 +426,7 @@ body::after{width:380px;height:380px;bottom:-140px;left:-100px;background:var(--
   </div>
 
   <div class="tab-content" id="tab-stats">
-    <div class="section">
+    <div class="section span-all">
       <div class="section-title" id="s-stats-overview">📊 огляд</div>
       <div class="stat-grid">
         <div class="stat-card">
@@ -639,17 +637,6 @@ const LANGUAGES = {
 };
 
 let currentLang = localStorage.getItem('streamdj_lang') || localStorage.getItem('panel_lang') || 'uk';
-
-function syncThemeBtn(){
-  const btn = document.getElementById('h-theme-btn');
-  if (btn) btn.textContent = document.body.classList.contains('theme-light') ? '☀️' : '🌙';
-}
-window.toggleTheme = function() {
-  document.body.classList.toggle('theme-light');
-  try { localStorage.setItem('streamdj_theme', document.body.classList.contains('theme-light') ? 'light' : 'dark'); } catch(e) {}
-  syncThemeBtn();
-};
-syncThemeBtn();
 
 window.changeLanguage = function(lang) {
   currentLang = lang;
@@ -921,7 +908,7 @@ function setBanTrackStatus(msg, isErr=false) {
   const el = document.getElementById('ban-track-status');
   if (!el) return;
   el.textContent = msg;
-  el.style.color = isErr ? '#e08080' : 'var(--green)';
+  el.style.color = isErr ? 'var(--red-btn-text)' : 'var(--green)';
 }
 function renderBans() {
   const t = LANGUAGES[currentLang];
@@ -1033,7 +1020,7 @@ window.addMyPlaylist = async function() {
 function setPlStatus(msg, isErr=false) {
   const el = document.getElementById('my-pl-status');
   el.textContent = msg;
-  el.style.color = isErr ? '#e08080' : 'var(--green)';
+  el.style.color = isErr ? 'var(--red-btn-text)' : 'var(--green)';
 }
 function renderMyPlaylists() {
   const t = LANGUAGES[currentLang];
@@ -1279,7 +1266,7 @@ window.addManualTrack = async function(){
   const status = document.getElementById('manual-status');
   const raw = input.value.trim();
   if (!raw) return;
-  const setSt = (msg, err) => { status.textContent = msg; status.style.color = err ? '#e08080' : 'var(--green)'; };
+  const setSt = (msg, err) => { status.textContent = msg; status.style.color = err ? 'var(--red-btn-text)' : 'var(--green)'; };
   const ya = extractYandexTrack(raw);
   if (ya) {
     const ok = await enqueueYandex(ya, userDisplayName || 'DJ', 'manual');
@@ -1481,65 +1468,175 @@ document.getElementById('tab-bar')?.addEventListener('scroll', ()=>{ moveTabIndi
 window.addEventListener('load', ()=>{ requestAnimationFrame(moveTabIndicator); });
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>moveTabIndicator()); }
 
-// ── COLORS / THEMES ──
-const PRESETS={
-  dark:{'--bg':'#0a0a0a','--bg2':'#161616','--accent':'#ffffff','--border':'#2a2a2a','--text':'#e0e0e0','--text2':'#888888'},
-  red:{'--bg':'#1a0000','--bg2':'#240808','--accent':'#ff4444','--border':'#3d1010','--text':'#e0a0a0','--text2':'#7a3535'},
-  blue:{'--bg':'#000a1a','--bg2':'#071428','--accent':'#4da6ff','--border':'#1a2f5a','--text':'#a0c8f0','--text2':'#3a6090'},
-  purple:{'--bg':'#0d001a','--bg2':'#170828','--accent':'#bf7fff','--border':'#3a1a5a','--text':'#d0a0f0','--text2':'#6a3590'},
-  green:{'--bg':'#001a0a','--bg2':'#082414','--accent':'#44ff88','--border':'#1a4a28','--text':'#a0e0b8','--text2':'#357a50'},
-  orange:{'--bg':'#1a0800','--bg2':'#240f08','--accent':'#ff8c44','--border':'#5a2a10','--text':'#f0c8a0','--text2':'#8a5a35'},
+// ── COLORS / THEMES: единый движок (режим dark/light + пресет + свои цвета) ──
+const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+function hexToRgb(h){ h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function rgbToHex(r,g,b){ return '#' + [r,g,b].map(v => clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join(''); }
+function hslToHex(h,s,l){ h = ((h % 360) + 360) % 360; s /= 100; l /= 100; const k = n => (n + h/30) % 12; const a = s * Math.min(l, 1-l); const f = n => l - a * Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1))); return rgbToHex(f(0)*255, f(8)*255, f(4)*255); }
+function hexToHsl(hex){ const [r,g,b] = hexToRgb(hex).map(v => v/255); const max = Math.max(r,g,b), min = Math.min(r,g,b); let h = 0, s = 0; const l = (max+min)/2; const d = max-min; if (d){ s = d/(1-Math.abs(2*l-1)); if (max===r) h = ((g-b)/d)%6; else if (max===g) h = (b-r)/d+2; else h = (r-g)/d+4; h *= 60; } return [(h+360)%360, s*100, l*100]; }
+function mixHex(a,b,t){ const A = hexToRgb(a), B = hexToRgb(b); return rgbToHex(A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t); }
+function lumOf(hex){ const c = hexToRgb(hex).map(v => { v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }); return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2]; }
+function rgbaOf(hex,a){ const [r,g,b] = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
+function shiftHue(hex, deg){ const [h,s,l] = hexToHsl(hex); return hslToHex(h+deg, s, l); }
+
+// пресет = оттенок поверхностей + пара акцентов для тёмного и светлого режима
+const PRESETS = {
+  dark:  { hue:255, sat:14, dark:['#a78bfa','#38bdf8'], light:['#7c3aed','#0284c7'] },
+  red:   { hue:0,   sat:40, dark:['#ff6b6b','#ffa94d'], light:['#dc2626','#ea580c'] },
+  blue:  { hue:215, sat:45, dark:['#4da6ff','#22d3ee'], light:['#2563eb','#0891b2'] },
+  purple:{ hue:280, sat:45, dark:['#c084fc','#f472b6'], light:['#9333ea','#db2777'] },
+  green: { hue:145, sat:40, dark:['#4ade80','#2dd4bf'], light:['#16a34a','#0d9488'] },
+  orange:{ hue:25,  sat:45, dark:['#fb923c','#facc15'], light:['#ea580c','#ca8a04'] },
 };
-const COLOR_FIELDS=[
-  {css:'--bg',id:'c-bg',hid:'h-bg'},
-  {css:'--bg2',id:'c-bg2',hid:'h-bg2'},
-  {css:'--accent',id:'c-accent',hid:'h-accent'},
-  {css:'--border',id:'c-border',hid:'h-border'},
-  {css:'--text',id:'c-text',hid:'h-text'},
-  {css:'--text2',id:'c-text2',hid:'h-text2'}
+const COLOR_FIELDS = [
+  {key:'bg',css:'--bg',id:'c-bg',hid:'h-bg'},
+  {key:'bg2',css:'--bg2',id:'c-bg2',hid:'h-bg2'},
+  {key:'accent',css:'--accent',id:'c-accent',hid:'h-accent'},
+  {key:'border',css:'--border',id:'c-border',hid:'h-border'},
+  {key:'text',css:'--text',id:'c-text',hid:'h-text'},
+  {key:'text2',css:'--text2',id:'c-text2',hid:'h-text2'}
 ];
-window.liveColor=(v,c)=>document.documentElement.style.setProperty(v,c);
-window.syncHex=function(inp){
-  const field=COLOR_FIELDS.find(f=>f.id===inp.id);
-  if(field) document.getElementById(field.hid).value=inp.value;
-};
-window.hexInput=function(css,colorId,inp){
-  const v=inp.value.trim();
-  if(/^#[0-9a-fA-F]{6}$/.test(v)){document.documentElement.style.setProperty(css,v);document.getElementById(colorId).value=v;}
-};
-window.applyPreset=function(name){
-  const p=PRESETS[name];if(!p)return;
-  COLOR_FIELDS.forEach(f=>{
-    if(p[f.css]){
-      document.getElementById(f.id).value=p[f.css];
-      document.getElementById(f.hid).value=p[f.css];
-      document.documentElement.style.setProperty(f.css,p[f.css]);
-    }
-  });
-};
-window.saveColors=async function(){
-  if(!uid)return;
-  const colors={};
-  COLOR_FIELDS.forEach(f=>{colors[f.css]=document.getElementById(f.id).value;});
-  await set(ref(db,`users/${uid}/panel_theme`),colors);
-  const btn=document.getElementById('b-save-theme');
-  btn.textContent=LANGUAGES[currentLang].saved_ok;
-  setTimeout(()=>btn.textContent=LANGUAGES[currentLang].b_save,1500);
-};
-window.resetColors=function(){applyPreset('dark');};
-function loadColors(){
-  onValue(ref(db,`users/${uid}/panel_theme`),(snap)=>{
-    const colors=snap.val();
-    if(!colors)return;
-    COLOR_FIELDS.forEach(f=>{
-      if(colors[f.css]){
-        document.getElementById(f.id).value=colors[f.css];
-        document.getElementById(f.hid).value=colors[f.css];
-        document.documentElement.style.setProperty(f.css,colors[f.css]);
-      }
-    });
+function presetBase(P, mode){
+  const h = P.hue, s = P.sat;
+  if (mode === 'dark') return { bg:hslToHex(h,s,5), bg2:hslToHex(h,s,8.5), bg3:hslToHex(h,s,11.5), border:hslToHex(h,s*0.9,16), border2:hslToHex(h,s*0.8,22), text:hslToHex(h,20,92), text2:hslToHex(h,10,62), accent:P.dark[0], accent2:P.dark[1] };
+  return { bg:hslToHex(h,30,95), bg2:'#ffffff', bg3:hslToHex(h,25,97.5), border:hslToHex(h,22,88), border2:hslToHex(h,18,80), text:hslToHex(h,30,10), text2:hslToHex(h,10,40), accent:P.light[0], accent2:P.light[1] };
+}
+// из базовых цветов строим ВСЕ переменные интерфейса — ничего не остаётся «тёмным»
+function buildVars(base){
+  const isDark = lumOf(base.bg) < 0.3;
+  const bg3 = base.bg3 || mixHex(base.bg2, base.text, 0.06);
+  const border2 = base.border2 || mixHex(base.border, base.text, 0.18);
+  const accent2 = base.accent2 || shiftHue(base.accent, 45);
+  const ink = lumOf(mixHex(base.accent, accent2, 0.5)) > 0.3 ? '#0b0b12' : '#ffffff';
+  const map = {
+    '--bg':base.bg, '--bg2':base.bg2, '--bg3':bg3, '--border':base.border, '--border2':border2,
+    '--accent':base.accent, '--accent2':accent2,
+    '--accent-grad':`linear-gradient(135deg,${base.accent},${accent2})`,
+    '--accent-ink':ink, '--accent-shadow':rgbaOf(base.accent, 0.35),
+    '--text':base.text, '--text2':base.text2, '--text3':isDark ? '#ffffff' : '#111111',
+    '--glow1':rgbaOf(base.accent, isDark ? 0.24 : 0.12), '--glow2':rgbaOf(accent2, isDark ? 0.18 : 0.10),
+    '--shadow':isDark ? '0 8px 24px rgba(0,0,0,0.35)' : '0 8px 24px rgba(40,30,80,0.08)',
+    '--green':isDark ? '#4ade80' : '#1f9d55',
+    '--green-bg':isDark ? 'rgba(74,222,128,0.12)' : 'rgba(31,157,85,0.10)',
+    '--green-border':isDark ? 'rgba(74,222,128,0.35)' : 'rgba(31,157,85,0.30)',
+    '--red-btn':isDark ? 'rgba(255,107,122,0.12)' : 'rgba(220,38,38,0.08)',
+    '--red-btn-text':isDark ? '#ff6b7a' : '#dc2626',
+    '--twitch-text':isDark ? '#b09fe0' : '#6441a5'
+  };
+  return { map, isDark };
+}
+
+const THEME_STATE_KEY = 'streamdj_theme_state';
+let themeMode = document.documentElement.dataset.mode === 'light' ? 'light' : 'dark';
+let themePreset = 'dark';
+let themeCustom = { dark:null, light:null };
+let currentBase = null;
+try {
+  const st = JSON.parse(localStorage.getItem(THEME_STATE_KEY) || 'null');
+  if (st) { themePreset = PRESETS[st.preset] ? st.preset : 'dark'; themeCustom = { dark:st.dark || null, light:st.light || null }; }
+} catch(e) {}
+
+function syncThemeBtn(){
+  const btn = document.getElementById('h-theme-btn');
+  if (btn) btn.textContent = themeMode === 'light' ? '☀️' : '🌙';
+}
+function syncPickers(){
+  COLOR_FIELDS.forEach(f => {
+    const v = currentBase[f.key];
+    if (v) { document.getElementById(f.id).value = v; document.getElementById(f.hid).value = v; }
   });
 }
+function updatePresetHighlight(){
+  Object.keys(PRESETS).forEach(n => {
+    document.getElementById('preset-' + n)?.classList.toggle('active', !themeCustom[themeMode] && themePreset === n);
+  });
+}
+function paintSwatches(){
+  Object.entries(PRESETS).forEach(([n, P]) => {
+    const el = document.getElementById('preset-' + n);
+    if (el) el.style.background = `linear-gradient(135deg,${hslToHex(P.hue, P.sat, 8)},${P.dark[0]})`;
+  });
+}
+function applyTheme(opts = {}){
+  const P = PRESETS[themePreset] || PRESETS.dark;
+  const custom = themeCustom[themeMode];
+  currentBase = custom ? { ...custom } : presetBase(P, themeMode);
+  const { map, isDark } = buildVars(currentBase);
+  const root = document.documentElement;
+  Object.entries(map).forEach(([k, v]) => root.style.setProperty(k, v));
+  root.style.colorScheme = isDark ? 'dark' : 'light';
+  root.dataset.mode = themeMode;
+  if (!opts.skipPickers) syncPickers();
+  updatePresetHighlight();
+  syncThemeBtn();
+  try {
+    localStorage.setItem('streamdj_theme', themeMode);
+    localStorage.setItem('streamdj_vars', JSON.stringify(map));
+    localStorage.setItem(THEME_STATE_KEY, JSON.stringify({ preset:themePreset, dark:themeCustom.dark, light:themeCustom.light }));
+  } catch(e) {}
+}
+window.toggleTheme = function(){
+  const root = document.documentElement;
+  root.classList.add('theme-anim');
+  themeMode = themeMode === 'light' ? 'dark' : 'light';
+  applyTheme();
+  clearTimeout(window._themeAnimT);
+  window._themeAnimT = setTimeout(() => root.classList.remove('theme-anim'), 500);
+};
+function editColor(key, val){
+  const c = { ...currentBase, [key]: val };
+  if (['bg','bg2','text'].includes(key)) delete c.bg3;
+  if (['border','text'].includes(key)) delete c.border2;
+  if (key === 'accent') c.accent2 = shiftHue(val, 45);
+  themeCustom[themeMode] = c;
+  applyTheme({ skipPickers:true });
+}
+window.liveColor = (css, val) => editColor(css.slice(2), val);
+window.syncHex = function(inp){
+  const f = COLOR_FIELDS.find(f => f.id === inp.id);
+  if (f) document.getElementById(f.hid).value = inp.value;
+};
+window.hexInput = function(css, colorId, inp){
+  const v = inp.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) { document.getElementById(colorId).value = v; editColor(css.slice(2), v.toLowerCase()); }
+};
+window.applyPreset = function(name){
+  if (!PRESETS[name]) return;
+  themePreset = name;
+  themeCustom[themeMode] = null;
+  applyTheme();
+};
+window.resetColors = function(){
+  themePreset = 'dark';
+  themeCustom = { dark:null, light:null };
+  applyTheme();
+};
+window.saveColors = async function(){
+  if (!uid) return;
+  await set(ref(db, `users/${uid}/panel_theme`), { preset:themePreset, customDark:themeCustom.dark || null, customLight:themeCustom.light || null });
+  const btn = document.getElementById('b-save-theme');
+  btn.textContent = LANGUAGES[currentLang].saved_ok;
+  setTimeout(() => btn.textContent = LANGUAGES[currentLang].b_save, 1500);
+};
+function loadColors(){
+  onValue(ref(db, `users/${uid}/panel_theme`), (snap) => {
+    const d = snap.val();
+    if (!d) return;
+    if (d['--bg']) {
+      // старый формат: {'--bg':..., ...}. Старая тема по умолчанию (#0a0a0a) — это «без своих цветов»
+      const legacy = { bg:d['--bg'], bg2:d['--bg2'], accent:d['--accent'], border:d['--border'], text:d['--text'], text2:d['--text2'] };
+      const ok = Object.values(legacy).every(Boolean) && d['--bg'] !== '#0a0a0a';
+      themePreset = 'dark';
+      themeCustom = { dark: ok ? legacy : null, light: null };
+    } else {
+      themePreset = PRESETS[d.preset] ? d.preset : 'dark';
+      themeCustom = { dark:d.customDark || null, light:d.customLight || null };
+    }
+    applyTheme();
+  });
+}
+paintSwatches();
+applyTheme();
 
 // ── WIDGET THEME ──
 const WIDGET_PRESETS={
