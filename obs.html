@@ -33,7 +33,7 @@ body{background:transparent;font-family:'Unbounded',sans-serif;padding:16px;over
 .track-text.short{animation:none;}
 .from-text{font-size:10px;color:var(--w-from);}
 .q-pill{font-size:10px;color:var(--w-pill);background:rgba(255,255,255,0.06);border:1px solid var(--w-border);border-radius:99px;padding:2px 8px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
-#ya-frame{position:fixed;left:0;bottom:0;width:340px;height:130px;border:0;opacity:0.001;pointer-events:none;}
+#ya-frame{position:fixed;left:0;bottom:0;width:500px;height:180px;border:0;opacity:0.001;pointer-events:none;}
 body.debug #ya-frame{opacity:1;pointer-events:auto;z-index:50;background:#222;}
 .error{color:#ff6060;font-size:12px;font-family:'Unbounded',sans-serif;padding:16px;}
 </style>
@@ -169,8 +169,8 @@ pd.style.cssText = 'position:fixed;bottom:-10px;left:-10px;width:1px;height:1px;
 document.body.appendChild(pd);
 
 // ── YANDEX MUSIC (iframe player, no JS API -> end of track by timer) ──
-// Якщо iframe не завантажується, спробуй формат: https://music.yandex.ru/iframe/#track/ID/ALBUM
-const YA_IFRAME = (track, album) => `https://music.yandex.ru/iframe/track/${track}${album ? '/' + album : ''}`;
+// Офіційний формат (з Поділитися → HTML-код): https://music.yandex.ru/iframe/#track/ID_ТРЕКУ/ID_АЛЬБОМУ
+const YA_IFRAME = (track, album) => `https://music.yandex.ru/iframe/#track/${track}${album ? '/' + album : ''}`;
 const yaFrame = document.createElement('iframe');
 yaFrame.id = 'ya-frame';
 yaFrame.setAttribute('allow', 'autoplay *; encrypted-media *');
