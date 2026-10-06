@@ -3,29 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>StreamDJ OBS Widget</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500&family=Montserrat:wght@600;800&family=Playfair+Display:wght@700&family=Orbitron:wght@600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:transparent;font-family:'Unbounded',sans-serif;padding:16px;overflow:hidden;}
 :root{
   --w-bg:rgba(20,0,0,0.85);--w-border:#c0392b;--w-title:#ffffff;--w-from:#7a3535;--w-label:#ff6060;--w-pill:#c08080;
-  --w-fontsize:13px;--w-scroll:12s;--w-radius:12px;--w-blur:4px;--w-font:'Unbounded',sans-serif;--w-shadow:none;
+  --w-fontsize:13px;--w-scroll:12s;--w-radius:12px;--w-blur:4px;--w-font:'Unbounded',sans-serif;
 }
 @keyframes scroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.widget{background:var(--w-bg);border:1px solid var(--w-border);border-radius:var(--w-radius);padding:10px 16px;min-width:320px;max-width:480px;backdrop-filter:blur(var(--w-blur));box-shadow:var(--w-shadow);transition:opacity 0.5s ease,transform 0.5s ease;font-family:var(--w-font);position:relative;}
+.widget{background:var(--w-bg);border:1px solid var(--w-border);border-radius:var(--w-radius);padding:10px 16px;min-width:320px;max-width:480px;backdrop-filter:blur(var(--w-blur));transition:opacity 0.5s ease,transform 0.5s ease;font-family:var(--w-font);position:relative;}
 .widget.hidden{opacity:0;transform:translateY(8px);pointer-events:none;}
 .widget.visible{opacity:1;transform:translateY(0);animation:fadeIn 0.5s ease;}
-/* default flow layout */
-.widget.layout-flow .top-row{display:flex;align-items:center;gap:10px;overflow:hidden;}
-.widget.layout-flow .from-text{margin-top:4px;}
-.widget.layout-flow .queue-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-/* custom absolute layout */
-.widget.layout-custom{min-height:120px;}
-.widget.layout-custom .top-row,.widget.layout-custom .from-text,.widget.layout-custom .queue-row{position:absolute;}
-.widget.layout-custom .top-row{display:flex;align-items:center;gap:10px;}
-.widget.layout-custom .queue-row{display:flex;gap:6px;flex-wrap:wrap;max-width:300px;}
+.top-row{display:flex;align-items:center;gap:10px;overflow:hidden;}
+.from-text{margin-top:4px;}
+.queue-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 
 .now-label{font-size:9px;color:var(--w-label);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;animation:pulse 1.5s ease-in-out infinite;}
 .track-scroll{flex:1;overflow:hidden;position:relative;}
@@ -40,7 +34,7 @@ body.debug #ya-frame{opacity:1;pointer-events:auto;z-index:50;background:#222;}
 </head>
 <body>
 
-<div class="widget hidden layout-flow" id="widget">
+<div class="widget hidden" id="widget">
   <div class="top-row" id="top-row">
     <span class="now-label" id="now-label">&#9835; grає</span>
     <div class="track-scroll"><span class="track-text short" id="track-title"></span></div>
@@ -95,58 +89,29 @@ onValue(langRef, (snap) => {
   if (val && STRINGS[val]) { lang = val; applyLang(); }
 });
 
-// ── THEME (colors, shape, typography, custom layout positions) ────
-const FONT_MAP = {
-  'Unbounded':"'Unbounded',sans-serif", 'Inter':"'Inter',sans-serif", 'Montserrat':"'Montserrat',sans-serif",
-  'Playfair Display':"'Playfair Display',serif", 'Orbitron':"'Orbitron',sans-serif", 'Bebas Neue':"'Bebas Neue',sans-serif"
-};
-
-function hexToRgba(hex, alphaPct) {
-  if (!hex) return null;
-  const h = hex.replace('#','');
+// ── THEME (кольори, розмір тексту, швидкість прокрутки — з панелі) ──
+function hexToRgba(hex, alpha) {
+  const h = (hex || '').replace('#','');
   if (h.length !== 6) return hex;
   const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
-  return `rgba(${r},${g},${b},${(alphaPct/100).toFixed(2)})`;
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 onValue(themeRef, (snap) => {
   const t = snap.val();
   if (!t) return;
   const s = document.documentElement.style;
-  const w = document.getElementById('widget');
-
-  if (t.bg) s.setProperty('--w-bg', t.opacity !== undefined ? hexToRgba(t.bg, t.opacity) : (t.bg + 'd9'));
+  if (t.bg) s.setProperty('--w-bg', hexToRgba(t.bg, 0.85));
   if (t.border) s.setProperty('--w-border', t.border);
   if (t.title) s.setProperty('--w-title', t.title);
   if (t.from) s.setProperty('--w-from', t.from);
   if (t.label) s.setProperty('--w-label', t.label);
   if (t.pill) s.setProperty('--w-pill', t.pill);
-  if (t.fontsize) s.setProperty('--w-fontsize', t.fontsize + 'px');
-  if (t.scroll) s.setProperty('--w-scroll', t.scroll + 's');
-  s.setProperty('--w-radius', (t.radius !== undefined ? t.radius : 12) + 'px');
-  s.setProperty('--w-blur', (t.blur !== undefined ? t.blur : 4) + 'px');
-  s.setProperty('--w-shadow', t.shadow ? '0 8px 30px rgba(0,0,0,.5)' : 'none');
-  s.setProperty('--w-font', FONT_MAP[t.fontFamily] || FONT_MAP['Unbounded']);
-
-  // Custom drag&drop layout from the constructor page
-  const topRow = document.getElementById('top-row');
-  const fromText = document.getElementById('track-from');
-  const queueRow = document.getElementById('queue-row');
-  if (t.layout) {
-    w.classList.remove('layout-flow');
-    w.classList.add('layout-custom');
-    if (t.layout.now || t.layout.title) {
-      // now-label and title share the top-row container; position it at the "now" spot
-      const p = t.layout.now || t.layout.title;
-      topRow.style.left = p.x + '%'; topRow.style.top = p.y + '%';
-    }
-    if (t.layout.from) { fromText.style.left = t.layout.from.x + '%'; fromText.style.top = t.layout.from.y + '%'; }
-    if (t.layout.queue) { queueRow.style.left = t.layout.queue.x + '%'; queueRow.style.top = t.layout.queue.y + '%'; }
-  } else {
-    w.classList.remove('layout-custom');
-    w.classList.add('layout-flow');
-    [topRow, fromText, queueRow].forEach(el => { el.style.left = ''; el.style.top = ''; });
-  }
+  // панель зберігає fontSize / scrollDuration
+  const fs = t.fontSize || t.fontsize;
+  const sc = t.scrollDuration || t.scroll;
+  if (fs) s.setProperty('--w-fontsize', fs + 'px');
+  if (sc) s.setProperty('--w-scroll', sc + 's');
 });
 
 // ── PLAYER ────────────────────────────────────────────────────────
@@ -178,14 +143,17 @@ document.body.appendChild(yaFrame);
 // ?debug=1 у посиланні OBS — показує iframe Яндекса і дає з ним взаємодіяти (логін, перевірка)
 if (new URLSearchParams(window.location.search).get('debug') === '1') document.body.classList.add('debug');
 
+let yaLoadTimer = null;
 function stopYandex() {
   clearTimeout(yaTimer); yaTimer = null;
+  clearTimeout(yaLoadTimer); yaLoadTimer = null;
   yaFrame.src = 'about:blank';
 }
 function startYandex(item) {
   stopYandex();
   try { player?.stopVideo?.(); } catch (e) {}
-  yaFrame.src = YA_IFRAME(item.yaTrack, item.yaAlbum);
+  // невелика пауза після about:blank, щоб iframe гарантовано перезавантажився
+  yaLoadTimer = setTimeout(() => { yaFrame.src = YA_IFRAME(item.yaTrack, item.yaAlbum); }, 150);
   const dur = Math.max(10, Number(item.duration) || 240);
   yaTimer = setTimeout(markDoneAndNext, (dur + 2) * 1000);
 }
@@ -323,9 +291,13 @@ function updateUI() {
     fromEl.textContent = '';
   }
 
-  qRow.innerHTML = rest.length > 0
-    ? rest.slice(0, 4).map(t => `<span class="q-pill">${t.title}</span>`).join('')
-    : '';
+  qRow.textContent = '';
+  rest.slice(0, 4).forEach(t => {
+    const pill = document.createElement('span');
+    pill.className = 'q-pill';
+    pill.textContent = t.title || '';
+    qRow.appendChild(pill);
+  });
 }
 
 setTimeout(tryPlay, 2000);

@@ -100,12 +100,6 @@ body{
 .btn-google{background:#fff;color:#333;}
 .btn-google:hover{box-shadow:0 8px 24px rgba(66,133,244,.28);}
 
-.btn-facebook{background:#1877F2;color:#fff;}
-.btn-facebook:hover{box-shadow:0 8px 24px rgba(24,119,242,.35);}
-
-.btn-playgames{background:#1a1a2e;color:#fff;border:1px solid #33334d;}
-.btn-playgames:hover{box-shadow:0 8px 24px rgba(64,224,208,.2);}
-
 .status-msg{font-size:12px;color:#e08080;margin-top:14px;text-align:center;min-height:16px;}
 .status-msg.ok{color:#40e0d0;}
 
@@ -202,7 +196,7 @@ body{
           </svg>
           <span class="i18n" data-key="btnGoogle">Google</span>
         </button>
-        </div>
+      </div>
       <div class="status-msg" id="status-front"></div>
 
       <button class="switch-link" onclick="flip(true)">
@@ -259,7 +253,7 @@ body{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider,
+  getAuth, signInWithPopup, GoogleAuthProvider,
   signInWithEmailAndPassword, createUserWithEmailAndPassword,
   sendPasswordResetEmail, updateProfile,
   onAuthStateChanged
@@ -367,7 +361,7 @@ const TRANSLATIONS = {
     emailPlaceholder: 'Email', passwordPlaceholder: 'Пароль',
     forgotLink: 'Забув(ла) пароль?', loginSubmit: 'Увійти',
     dividerOr: 'або',
-    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Ігри',
+    btnGoogle: 'Google',
     toRegister: 'Немає акаунта? <b>Зареєструватися</b>',
     regTitle: 'Створити акаунт', regSub: 'Приєднуйся до StreamDJ',
     namePlaceholder: "Ім'я", passwordHintPlaceholder: 'Пароль (мін. 6 символів)',
@@ -375,7 +369,6 @@ const TRANSLATIONS = {
     toLogin: 'Вже є акаунт? <b>Увійти</b>',
     hint: 'Twitch підключається <span>всередині панелі</span> після входу',
     connectingEmail: 'Вхід...', connectingGoogle: 'Підключення через Google...',
-    connectingFacebook: 'Підключення через Facebook...', connectingPlayGames: 'Підключення через Play Ігри...',
     resetSent: 'Лист для скидання пароля надіслано на пошту',
     error: 'Помилка', tryAgain: 'спробуй ще раз',
     errInvalidEmail: 'Некоректна email адреса',
@@ -393,7 +386,7 @@ const TRANSLATIONS = {
     emailPlaceholder: 'Email', passwordPlaceholder: 'Password',
     forgotLink: 'Forgot password?', loginSubmit: 'Log in',
     dividerOr: 'or',
-    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Games',
+    btnGoogle: 'Google',
     toRegister: "Don't have an account? <b>Sign up</b>",
     regTitle: 'Create account', regSub: 'Join StreamDJ',
     namePlaceholder: 'Name', passwordHintPlaceholder: 'Password (min. 6 characters)',
@@ -401,7 +394,6 @@ const TRANSLATIONS = {
     toLogin: 'Already have an account? <b>Log in</b>',
     hint: 'Twitch is connected <span>inside the panel</span> after login',
     connectingEmail: 'Signing in...', connectingGoogle: 'Connecting via Google...',
-    connectingFacebook: 'Connecting via Facebook...', connectingPlayGames: 'Connecting via Play Games...',
     resetSent: 'Password reset email sent',
     error: 'Error', tryAgain: 'try again',
     errInvalidEmail: 'Invalid email address',
@@ -419,7 +411,7 @@ const TRANSLATIONS = {
     emailPlaceholder: 'Email', passwordPlaceholder: 'Пароль',
     forgotLink: 'Забыл(а) пароль?', loginSubmit: 'Войти',
     dividerOr: 'или',
-    btnGoogle: 'Google', btnFacebook: 'Facebook', btnPlaygames: 'Play Игры',
+    btnGoogle: 'Google',
     toRegister: 'Нет аккаунта? <b>Зарегистрироваться</b>',
     regTitle: 'Создать аккаунт', regSub: 'Присоединяйся к StreamDJ',
     namePlaceholder: 'Имя', passwordHintPlaceholder: 'Пароль (мин. 6 символов)',
@@ -427,7 +419,6 @@ const TRANSLATIONS = {
     toLogin: 'Уже есть аккаунт? <b>Войти</b>',
     hint: 'Twitch подключается <span>внутри панели</span> после входа',
     connectingEmail: 'Вход...', connectingGoogle: 'Подключение через Google...',
-    connectingFacebook: 'Подключение через Facebook...', connectingPlayGames: 'Подключение через Play Игры...',
     resetSent: 'Письмо для сброса пароля отправлено на почту',
     error: 'Ошибка', tryAgain: 'попробуй ещё раз',
     errInvalidEmail: 'Некорректный email адрес',
