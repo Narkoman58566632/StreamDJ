@@ -159,7 +159,7 @@ html.theme-anim *:not(.tab-indicator),html.theme-anim body::before,html.theme-an
 .ban-name{font-size:13px;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ban-meta{font-size:11px;color:var(--text2);}
 
-/* ── Центрування контенту на великих екранах (ПК) ── */                          
+/* ── Центрування контенту на великих екранах (ПК) ── */
 #app{max-width:none;width:100%;margin:0;}
 .span-all{grid-column:1/-1;}
 @media(min-width:1100px){
@@ -334,6 +334,8 @@ html.theme-anim *:not(.tab-indicator),html.theme-anim body::before,html.theme-an
         <input class="reward-input" id="reward-name-input" type="text" placeholder="🎵 Замов трек" value="🎵 Замов трек" onchange="saveRewards()">
         <div class="reward-hint" id="lbl-reward-hint2">⚠️ Має співпадати з назвою нагороди в Twitch Channel Points</div>
         <div class="reward-hint" id="lbl-yandex-support" style="margin-top:10px;">🟡 Також приймаються посилання на Яндекс Музику (у тій самій нагороді).</div>
+        <div class="reward-label" id="lbl-yandex-duration" style="margin-top:10px;">тривалість Яндекс-треку за замовчуванням (сек)</div>
+        <input type="number" class="num-input" id="yandex-duration" value="240" min="30" max="1800" onchange="saveRewards()">
       </div>
       <div class="log-box" id="twitch-log"></div>
     </div>
@@ -535,6 +537,7 @@ const LANGUAGES = {
     confirm_unban_user:"Розбанити цього глядача?",confirm_unban_track:"Розбанити цей трек?",btn_unban:"Розбанити",
     btn_ban_short:"🚫",banned_by_from:"забанено",queue_skip_banned:"⛔ Пропущено (глядач у бані)",track_skip_banned:"⛔ Пропущено (трек у бані)",
     lbl_yandex_support:"🟡 Також приймаються посилання на Яндекс Музику (у тій самій нагороді).",
+    lbl_yandex_duration:"тривалість Яндекс-треку за замовчуванням (сек), якщо не вдалося отримати її з Яндекса",
     log_yandex_added:"🟡 Яндекс трек додано",log_yandex_no_meta:"Не вдалося отримати назву з Яндекса — використовую стандартну",
     s_manual:"➕ додати трек вручну",manual_placeholder:"Посилання на YouTube або Яндекс Музику...",manual_add:"+ Додати",
     manual_error:"❌ Не вдалося розпізнати посилання",manual_ok:"✅ Додано в чергу"
@@ -580,6 +583,7 @@ const LANGUAGES = {
     confirm_unban_user:"Разбанить этого зрителя?",confirm_unban_track:"Разбанить этот трек?",btn_unban:"Разбанить",
     btn_ban_short:"🚫",banned_by_from:"забанен",queue_skip_banned:"⛔ Пропущено (зритель забанен)",track_skip_banned:"⛔ Пропущено (трек забанен)",
     lbl_yandex_support:"🟡 Также принимаются ссылки на Яндекс Музыку (в той же награде).",
+    lbl_yandex_duration:"длительность Яндекс-трека по умолчанию (сек), если не удалось получить её из Яндекса",
     log_yandex_added:"🟡 Яндекс трек добавлен",log_yandex_no_meta:"Не удалось получить название из Яндекса — использую стандартное",
     s_manual:"➕ добавить трек вручную",manual_placeholder:"Ссылка на YouTube или Яндекс Музыку...",manual_add:"+ Добавить",
     manual_error:"❌ Не удалось распознать ссылку",manual_ok:"✅ Добавлено в очередь"
@@ -625,6 +629,7 @@ const LANGUAGES = {
     confirm_unban_user:"Unban this viewer?",confirm_unban_track:"Unban this track?",btn_unban:"Unban",
     btn_ban_short:"🚫",banned_by_from:"banned",queue_skip_banned:"⛔ Skipped (viewer banned)",track_skip_banned:"⛔ Skipped (track banned)",
     lbl_yandex_support:"🟡 Yandex Music links are also accepted (in the same reward).",
+    lbl_yandex_duration:"default Yandex track duration (sec), used if it can't be fetched from Yandex",
     log_yandex_added:"🟡 Yandex track added",log_yandex_no_meta:"Could not fetch the title from Yandex — using a default one",
     s_manual:"➕ add a track manually",manual_placeholder:"YouTube or Yandex Music link...",manual_add:"+ Add",
     manual_error:"❌ Could not recognize the link",manual_ok:"✅ Added to the queue"
@@ -659,7 +664,7 @@ function applyLocalization() {
   document.getElementById('b-pause').textContent = t.b_pause;
   document.getElementById('b-skip').textContent = t.b_skip;
   document.getElementById('b-replay').textContent = t.b_replay;
-  document.getElementById('b-clear').textContent = t.b_clear;  
+  document.getElementById('b-clear').textContent = t.b_clear;
   document.getElementById('s-my-playlists').textContent = t.s_my_playlists;
   document.getElementById('lbl-fallback').textContent = t.lbl_fallback;
   document.getElementById('mode-off').textContent = t.mode_off;
@@ -702,6 +707,7 @@ function applyLocalization() {
   document.getElementById('m-obs-close').textContent = t.m_obs_close;
   document.getElementById('s-queue-title').textContent = t.s_queue_title;
   document.getElementById('lbl-yandex-support').textContent = t.lbl_yandex_support;
+  document.getElementById('lbl-yandex-duration').textContent = t.lbl_yandex_duration;
   document.getElementById('s-manual').textContent = t.s_manual;
   document.getElementById('manual-url').placeholder = t.manual_placeholder;
   document.getElementById('manual-add-btn').textContent = t.manual_add;
@@ -1239,13 +1245,12 @@ async function enqueueYandex(ya, userName, source){
   if (isTrackBanned(banKey)) { log(`${t.track_skip_banned}: ${banKey}`, 'err'); return false; }
   const meta = await fetchYandexMeta(ya.trackId, ya.albumId);
   if (!meta) log(t.log_yandex_no_meta, 'info');
-  const defDur = parseInt(document.getElementById('yandex-duration').value) || 240;
   try {
     await push(qRef(), {
       id: banKey, provider: 'yandex', yaTrack: ya.trackId, yaAlbum: ya.albumId,
       title: meta?.title || `Yandex Music #${ya.trackId}`, channel: '',
       from: userName, ts: Date.now(), status: 'approved', source: source,
-      duration: meta?.duration || defDur
+      duration: meta?.duration || 240
     });
     log(t.log_yandex_added, 'ok');
     return true;
