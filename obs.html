@@ -73,16 +73,21 @@ const langRef = ref(db, `users/${uid}/lang`);
 
 // ── i18n ──────────────────────────────────────────────────────────
 const STRINGS = {
-  uk: { playing: '♫ grає', from: 'від' },
-  ru: { playing: '♫ играет', from: 'от' },
-  en: { playing: '♫ playing', from: 'by' }
+  uk: { playing: '♫ grає', paused: '⏸ пауза', from: 'від' },
+  ru: { playing: '♫ играет', paused: '⏸ пауза', from: 'от' },
+  en: { playing: '♫ playing', paused: '⏸ paused', from: 'by' }
 };
 let lang = 'uk';
 let currentPlaying = null;
 function S(key) { return (STRINGS[lang] || STRINGS.uk)[key]; }
 function applyLang() {
-  document.getElementById('now-label').textContent = S('playing');
+  updateNowLabel();
   if (currentPlaying) document.getElementById('track-from').textContent = S('from') + ' ' + currentPlaying.from;
+}
+// підпис «grає / пауза» — для Яндекса показуємо стан паузи
+function updateNowLabel() {
+  const el = document.getElementById('now-label');
+  if (el) el.textContent = (currentProvider === 'yandex' && yaPaused) ? S('paused') : S('playing');
 }
 onValue(langRef, (snap) => {
   const val = snap.val();
@@ -117,6 +122,7 @@ onValue(themeRef, (snap) => {
 // ── PLAYER ────────────────────────────────────────────────────────
 let player = null, currentKey = null, hideTimer = null;
 let currentItem = null, currentProvider = 'youtube', yaTimer = null;
+let yaPaused = false;
 const tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(tag);
@@ -148,6 +154,7 @@ function stopYandex() {
   clearTimeout(yaTimer); yaTimer = null;
   clearTimeout(yaLoadTimer); yaLoadTimer = null;
   yaFrame.src = 'about:blank';
+  yaPaused = false;
 }
 function startYandex(item) {
   stopYandex();
@@ -156,6 +163,20 @@ function startYandex(item) {
   yaLoadTimer = setTimeout(() => { yaFrame.src = YA_IFRAME(item.yaTrack, item.yaAlbum); }, 150);
   const dur = Math.max(10, Number(item.duration) || 240);
   yaTimer = setTimeout(markDoneAndNext, (dur + 2) * 1000);
+  updateNowLabel();
+}
+// «Пауза» для Яндекса: iframe не має API, тому глушимо звук (вивантажуємо iframe)
+// і зупиняємо таймер кінця треку. Трек залишається в черзі зі статусом playing.
+function pauseYandex() {
+  if (!currentItem || yaPaused) return;
+  stopYandex();
+  yaPaused = true;
+  updateNowLabel();
+}
+// «Відтворити» після паузи: iframe не вміє перемотувати, тому трек стартує спочатку
+function resumeYandex() {
+  if (!currentItem || !yaPaused) return;
+  startYandex(currentItem);
 }
 // якщо поточний трек зник із черги (видалили / очистили) — зупиняємо звук
 function cleanupIfGone() {
@@ -163,6 +184,7 @@ function cleanupIfGone() {
     currentKey = null; currentItem = null; currentProvider = 'youtube';
     stopYandex();
     try { player?.stopVideo?.(); } catch (e) {}
+    updateNowLabel();
   }
 }
 
@@ -171,9 +193,12 @@ onValue(controlRef, (snap) => {
   const data = snap.val();
   if (!data) return;
   if (currentProvider === 'yandex') {
-    // iframe Яндекса не має API: працюють тільки «пропустити» та «спочатку»
+    // iframe Яндекса не має API: skip/replay працюють повністю,
+    // pause/play — «м'яка» пауза (звук вимикається, відновлення — спочатку)
     if (data.action === 'skip') markDoneAndNext();
     if (data.action === 'replay' && currentItem) startYandex(currentItem);
+    if (data.action === 'pause') pauseYandex();
+    if (data.action === 'play') resumeYandex();
     return;
   }
   if (!player) return;
@@ -209,6 +234,7 @@ function tryPlay() {
         stopYandex();
         currentKey = playing.key; currentProvider = 'youtube'; currentItem = playing;
         player.loadVideoById(playing.id);
+        updateNowLabel();
       }
     }
     return;
@@ -227,6 +253,7 @@ function markDoneAndNext() {
   const played = queue.find(t => t.key === keyToRemove);
   currentKey = null; currentItem = null; currentProvider = 'youtube';
   stopYandex();
+  updateNowLabel();
   if (played) {
     const hRef = ref(db, `users/${uid}/history`);
     push(hRef, {
