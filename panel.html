@@ -159,7 +159,7 @@ html.theme-anim *:not(.tab-indicator),html.theme-anim body::before,html.theme-an
 .ban-name{font-size:13px;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ban-meta{font-size:11px;color:var(--text2);}
 
-/* ── Центрування контенту на великих екранах (ПК) ── */
+/* ── Центрування контенту на великих екранах (ПК) ── */                          
 #app{max-width:none;width:100%;margin:0;}
 .span-all{grid-column:1/-1;}
 @media(min-width:1100px){
@@ -825,7 +825,6 @@ function initRewards() {
     if (cfg.trackReward !== undefined) document.getElementById('reward-name-input').value = cfg.trackReward;
     if (cfg.playlistReward !== undefined) document.getElementById('playlist-reward-name').value = cfg.playlistReward;
     if (cfg.maxPlTracks !== undefined) document.getElementById('max-pl-tracks').value = cfg.maxPlTracks;
-    if (cfg.yandexDuration !== undefined) document.getElementById('yandex-duration').value = cfg.yandexDuration;
   });
 }
 window.saveRewards = async function() {
@@ -833,7 +832,6 @@ window.saveRewards = async function() {
   const trackReward = document.getElementById('reward-name-input').value.trim();
   const playlistReward = document.getElementById('playlist-reward-name').value.trim();
   const maxPlTracks = parseInt(document.getElementById('max-pl-tracks').value) || 10;
-  const yandexDuration = parseInt(document.getElementById('yandex-duration').value) || 240;
   await set(rewardCfgRef(), { trackReward, playlistReward, maxPlTracks, yandexDuration });
 };
 
