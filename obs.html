@@ -141,7 +141,7 @@ document.body.appendChild(pd);
 
 // ── YANDEX MUSIC (iframe player, no JS API -> end of track by timer) ──
 // Офіційний формат (з Поділитися → HTML-код): https://music.yandex.ru/iframe/#track/ID_ТРЕКУ/ID_АЛЬБОМУ
-const YA_IFRAME = (track, album) => `https://music.yandex.ru/iframe/#track/${track}${album ? '/' + album : ''}`;
+const YA_IFRAME = (track, album) => `https://music.yandex.ru/iframe/?autoplay=1#track/${track}${album ? '/' + album : ''}`;
 const yaFrame = document.createElement('iframe');
 yaFrame.id = 'ya-frame';
 yaFrame.setAttribute('allow', 'autoplay *; encrypted-media *');
@@ -173,8 +173,8 @@ function pauseYandex() {
   yaPaused = true;
   updateNowLabel();
 }
-// «Відтворити» після паузи: iframe не вміє перемотувати, тому трек стартує спочатку
-function resumeYandex() {
+// «Відтити»ати, тому трек стартує спочатку
+function resu після паузи: iframe не вміє перемворотувmeYandex() {
   if (!currentItem || !yaPaused) return;
   startYandex(currentItem);
 }
